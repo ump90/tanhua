@@ -1,0 +1,87 @@
+{
+  "groups": [
+    {
+      "name": "tanhua.aip",
+      "type": "com.tanhua.properties.AiFaceProperties",
+      "sourceType": "com.tanhua.properties.AiFaceProperties"
+    },
+    {
+      "name": "tanhua.oos",
+      "type": "com.tanhua.properties.OosProperties",
+      "sourceType": "com.tanhua.properties.OosProperties"
+    },
+    {
+      "name": "tanhua.sms",
+      "type": "com.tanhua.properties.SmsProperties",
+      "sourceType": "com.tanhua.properties.SmsProperties"
+    }
+  ],
+  "properties": [
+    {
+      "name": "tanhua.aip.app-id",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.AiFaceProperties"
+    },
+    {
+      "name": "tanhua.aip.app-key",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.AiFaceProperties"
+    },
+    {
+      "name": "tanhua.aip.app-secret-key",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.AiFaceProperties"
+    },
+    {
+      "name": "tanhua.oos.access-key-id",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.OosProperties"
+    },
+    {
+      "name": "tanhua.oos.access-key-secret",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.OosProperties"
+    },
+    {
+      "name": "tanhua.oos.bucket-name",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.OosProperties"
+    },
+    {
+      "name": "tanhua.oos.endpoint",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.OosProperties"
+    },
+    {
+      "name": "tanhua.oos.key",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.OosProperties"
+    },
+    {
+      "name": "tanhua.oos.url",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.OosProperties"
+    },
+    {
+      "name": "tanhua.sms.access-key-id",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.SmsProperties"
+    },
+    {
+      "name": "tanhua.sms.access-key-secret",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.SmsProperties"
+    },
+    {
+      "name": "tanhua.sms.sign-name",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.SmsProperties"
+    },
+    {
+      "name": "tanhua.sms.template-code",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.SmsProperties"
+    }
+  ],
+  "hints": []
+}

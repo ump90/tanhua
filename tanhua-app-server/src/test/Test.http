@@ -1,0 +1,28 @@
+POST http://127.0.0.1:1001/user/login
+Content-Type: application/json
+
+{
+  "phone": "13500000000"
+}
+
+
+###
+POST http://localhost:1001/user/loginVerification
+Content-Type: application/json
+
+{
+  "phone": "13500000000",
+  "verificationCode": "605685"
+}
+###
+GET http://localhost:1001/users
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJwaG9uZSI6IjEzNTAwMDAwMDAwIiwiaWQiOiIxIiwiZXhwIjoxNjM2MjcwNDkyfQ.Xoq9kDy2x15rEqkJLSMbmKfPFp8VkDgugzVf4a55b6vHN0OcZE9hi3m1Fo5Ae49qXSl8Lt4lIatrM71o4ebOiw
+
+
+###
+GET http://localhost:1001/tanhua/todayBest
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJwaG9uZSI6IjEzNTAwMDAwMDAwIiwiaWQiOiIxIiwiZXhwIjoxNjM2MjA1ODM3fQ.mD6IUeRx-5c8XGsalaxYKnzWcDNavcCUnVzVqUKzURDb3b51_7Z6x8GdVIWsuWUcH87QqtflsBjw6zsrqgho8w
+
+###
+GET http://localhost:1001/tanhua/recommendation
+Authorization: eyJhbGciOiJIUzUxMiJ9.eyJwaG9uZSI6IjEzNTAwMDAwMDAwIiwiaWQiOiIxIiwiZXhwIjoxNjM2MjcwNDkyfQ.Xoq9kDy2x15rEqkJLSMbmKfPFp8VkDgugzVf4a55b6vHN0OcZE9hi3m1Fo5Ae49qXSl8Lt4lIatrM71o4ebOiw

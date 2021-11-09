@@ -1,0 +1,43 @@
+tanhua:
+  sms:
+    signName: 物流云商
+    templateCode: SMS_106590012
+    accessKeyId: LTAI4GKgob9vZ53k2SZdyAC7
+    accessKeySecret: LHLBvXmILRoyw0niRSBuXBZewQ30la
+
+  oos:
+    endpoint: oss-cn-beijing.aliyuncs.com
+    bucketName: tanhua001
+    url: https://tanhua001.oss-cn-beijing.aliyuncs.com/
+    access-key-id: LTAI4GKgob9vZ53k2SZdyAC7
+    access-key-secret: LHLBvXmILRoyw0niRSBuXBZewQ30la
+  aip:
+    appId: 24021388
+    apiKey: ZnMTwoETXnu4OPIGwGAO2H4G
+    appSecretKey: D4jXShyinv5q26bUS78xRKgNLnB9IfZh
+
+spring:
+  application:
+    name: tanhua-app-server
+  redis:
+    host: 192.168.136.160
+    database: 0
+    jedis:
+      pool:
+        max-active: 8
+        max-idle: 8
+        min-idle: 0
+        max-wait: 1ms
+  cloud:
+    nacos:
+      server-addr: 127.0.0.1:8848
+
+dubbo:
+  registry:
+    address: nacos://127.0.0.1:8848
+  consumer:
+    timeout: 30000
+
+
+server:
+  port: 1001
