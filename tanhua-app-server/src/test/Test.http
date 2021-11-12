@@ -5,24 +5,62 @@ Content-Type: application/json
   "phone": "13500000000"
 }
 
-
 ###
 POST http://localhost:1001/user/loginVerification
 Content-Type: application/json
 
 {
   "phone": "13500000000",
-  "verificationCode": "605685"
+  "verificationCode": "254102"
 }
+
+> {%
+client.global.set("token", response.body.token);
+ %}
+
 ###
 GET http://localhost:1001/users
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJwaG9uZSI6IjEzNTAwMDAwMDAwIiwiaWQiOiIxIiwiZXhwIjoxNjM2MjcwNDkyfQ.Xoq9kDy2x15rEqkJLSMbmKfPFp8VkDgugzVf4a55b6vHN0OcZE9hi3m1Fo5Ae49qXSl8Lt4lIatrM71o4ebOiw
+Authorization: {{token}}
 
 
 ###
 GET http://localhost:1001/tanhua/todayBest
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJwaG9uZSI6IjEzNTAwMDAwMDAwIiwiaWQiOiIxIiwiZXhwIjoxNjM2MjA1ODM3fQ.mD6IUeRx-5c8XGsalaxYKnzWcDNavcCUnVzVqUKzURDb3b51_7Z6x8GdVIWsuWUcH87QqtflsBjw6zsrqgho8w
+Authorization: {{token}}
 
 ###
 GET http://localhost:1001/tanhua/recommendation
-Authorization: eyJhbGciOiJIUzUxMiJ9.eyJwaG9uZSI6IjEzNTAwMDAwMDAwIiwiaWQiOiIxIiwiZXhwIjoxNjM2MjcwNDkyfQ.Xoq9kDy2x15rEqkJLSMbmKfPFp8VkDgugzVf4a55b6vHN0OcZE9hi3m1Fo5Ae49qXSl8Lt4lIatrM71o4ebOiw
+Authorization:{{token}}
+
+###
+GET http://localhost:1001/movements
+Authorization: {{token}}
+
+###
+GET  http://localhost:1001/movements/all?userId=1
+Authorization: {{token}}
+
+###
+GET http://localhost:1001/movements/recommend
+Authorization: {{token}}
+
+###
+GET http://localhost:1001/comments?movementId=
+Authorization: {{token}}
+
+###
+POST http://localhost:1001/comments
+Authorization: {{token}}
+Content-Type: application/json
+
+{
+  "movementId": "5e82dc406401952928c211cd",
+  "comment": "测试评论"
+}
+
+###
+GET http://localhost:1001/comments/5e82dc406401952928c211cd/dislike
+Authorization: {{token}}
+
+###
+GET http://localhost:1001/comments/5e82dc406401952928c211cd/like
+Authorization: {{token}}

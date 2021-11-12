@@ -59,12 +59,12 @@
         <dependency>
             <groupId>cn.hutool</groupId>
             <artifactId>hutool-all</artifactId>
-            <version>5.7.14</version>
+            <version>5.7.15</version>
         </dependency>
         <dependency>
             <groupId>com.alibaba</groupId>
             <artifactId>fastjson</artifactId>
-            <version>1.2.70</version>
+            <version>1.2.78</version>
         </dependency>
     </dependencies>
 
@@ -73,7 +73,7 @@
             <dependency>
                 <groupId>io.netty</groupId>
                 <artifactId>netty-bom</artifactId>
-                <version>4.1.59.Final</version>
+                <version>4.1.69.Final</version>
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
@@ -88,7 +88,8 @@
 
             <dependency>
                 <groupId>io.projectreactor.netty</groupId>
-                <artifactId>reactor-netty</artifactId>
+                <artifactId>reactor-netty-core</artifactId>
+                <version>1.0.12</version>
             </dependency>
 
             <dependency>
@@ -140,17 +141,7 @@
                 <version>${lombok.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>${commons-lang3.version}</version>
-            </dependency>
 
-            <dependency>
-                <groupId>org.apache.commons</groupId>
-                <artifactId>commons-lang3</artifactId>
-                <version>3.7</version>
-            </dependency>
             <!-- Jackson Json处理工具包 -->
             <dependency>
                 <groupId>com.fasterxml.jackson.core</groupId>

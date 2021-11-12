@@ -30,11 +30,11 @@ spring:
         max-wait: 1ms
   cloud:
     nacos:
-      server-addr: 127.0.0.1:8848
+      server-addr: 192.168.136.160:8848
 
 dubbo:
   registry:
-    address: nacos://127.0.0.1:8848
+    address: nacos://192.168.136.160:8848
   consumer:
     timeout: 30000
 

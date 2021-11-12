@@ -13,10 +13,10 @@ import org.apache.dubbo.config.annotation.DubboService;
 @DubboService
 public class UserApiImpl extends ServiceImpl<UserMapper, User> implements UserApi {
 
-    @Override
-    public User getUserByPhone(String phone) {
-        LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
-        lambdaQueryWrapper.eq(User::getMobile, phone);
-        return this.getOne(lambdaQueryWrapper);
-    }
+  @Override
+  public User getByPhone(String phone) {
+    LambdaQueryWrapper<User> lambdaQueryWrapper = new LambdaQueryWrapper<>();
+    lambdaQueryWrapper.eq(User::getMobile, phone);
+    return this.getOne(lambdaQueryWrapper);
+  }
 }

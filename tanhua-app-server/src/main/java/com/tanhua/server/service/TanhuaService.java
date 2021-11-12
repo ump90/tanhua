@@ -6,8 +6,9 @@ import com.tanhua.pojo.RecommendUser;
 import com.tanhua.pojo.RecommendUserDto;
 import com.tanhua.pojo.UserInfo;
 import com.tanhua.server.utils.UserThreadLocal;
+import com.tanhua.utils.PageUtil;
+import com.tanhua.vo.PageVo;
 import com.tanhua.vo.TodayBestVo;
-import com.tanhua.vo.UserPageVo;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
@@ -39,24 +40,24 @@ public class TanhuaService {
     return todayBestVo;
   }
 
-  public UserPageVo getRecommendUserPageVo(RecommendUserDto recommendUserDto) {
+  public PageVo getRecommendUserPageVo(RecommendUserDto recommendUserDto) {
     Long userId = UserThreadLocal.getId();
     int page = recommendUserDto.getPage();
     int pageSize = recommendUserDto.getPagesize();
     List<RecommendUser> recommendUserList =
-        recommendUserApi.queryWithMaxScoreList(userId, pageSize,page);
-    int totalCount = Math.toIntExact(recommendUserApi.queryCount(userId));
-    UserPageVo userPageVo = new UserPageVo();
+        recommendUserApi.queryWithMaxScoreList(userId, pageSize, page);
+    int totalCount = Math.toIntExact(recommendUserApi.count(userId));
     List<Long> userIdList = new ArrayList<>();
     for (RecommendUser recommendUser : recommendUserList) {
       userIdList.add(recommendUser.getUserId());
     }
     List<UserInfo> userInfoList = userInfoApi.listByIds(userIdList);
-    userPageVo.setItems(userInfoList);
-    userPageVo.setPage(page);
-    userPageVo.setPagesize(pageSize);
-    userPageVo.setPages((int) Math.ceil((double) totalCount/pageSize));
-    userPageVo.setCounts(totalCount);
-    return userPageVo;
+    return PageVo.builder()
+        .items(userInfoList)
+        .pages(PageUtil.convertPage(pageSize, totalCount))
+        .counts(totalCount)
+        .page(page)
+        .pagesize(pageSize)
+        .build();
   }
 }

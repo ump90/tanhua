@@ -17,15 +17,14 @@ import java.util.List;
 @DubboService
 public class RecommendUserApiImpl implements RecommendUserApi {
 
-  @Autowired
-  private MongoTemplate mongoTemplate;
+  @Autowired private MongoTemplate mongoTemplate;
 
   @Override
   public RecommendUser queryWithMaxScore(Long toUserId) {
     Query query = new Query(Criteria.where("toUserId").is(toUserId));
     Sort sort = Sort.by(Sort.Order.desc("Score"));
     query.with(sort);
-    return mongoTemplate.findOne(query,RecommendUser.class);
+    return mongoTemplate.findOne(query, RecommendUser.class);
   }
 
   @Override
@@ -35,12 +34,12 @@ public class RecommendUserApiImpl implements RecommendUserApi {
     query.with(sort);
     query.limit(pageSize);
     query.skip((long) (pageNum - 1) * pageSize);
-    return mongoTemplate.find(query,RecommendUser.class);
+    return mongoTemplate.find(query, RecommendUser.class);
   }
 
   @Override
-  public Long queryCount(Long toUserId) {
-    Query query=new Query(Criteria.where("toUserId").is(toUserId));
-    return mongoTemplate.count(query,RecommendUser.class);
+  public Long count(Long toUserId) {
+    Query query = new Query(Criteria.where("toUserId").is(toUserId));
+    return mongoTemplate.count(query, RecommendUser.class);
   }
 }

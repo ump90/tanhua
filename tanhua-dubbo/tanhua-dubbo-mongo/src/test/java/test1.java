@@ -1,4 +1,6 @@
 import com.tanhua.dubbo.MongoApplication;
+import com.tanhua.dubbo.api.CommentApi;
+import com.tanhua.dubbo.api.FriendApi;
 import com.tanhua.dubbo.api.RecommendUserApi;
 import com.tanhua.pojo.RecommendUser;
 import org.junit.Test;
@@ -16,18 +18,31 @@ import org.springframework.test.context.junit4.SpringRunner;
 @SpringBootTest(classes = MongoApplication.class)
 @RunWith(SpringRunner.class)
 public class test1 {
-    @Autowired
-    private MongoTemplate mongoTemplate;
+  @Autowired private MongoTemplate mongoTemplate;
 
-    @Autowired
-    private RecommendUserApi recommendUserApi;
-    @Test
-    public void test(){
+  @Autowired private RecommendUserApi recommendUserApi;
+
+  @Autowired private CommentApi commentApi;
+
+  @Autowired private FriendApi friendApi;
+
+  @Test
+  public void test() {
     System.out.println(mongoTemplate.findOne(new Query(), RecommendUser.class));
-    }
+  }
 
-    @Test
-    public void  test2(){
+  @Test
+  public void test2() {
     System.out.println(recommendUserApi.queryWithMaxScore(1L));
-    }
+  }
+
+  @Test
+  public void test3() {
+    friendApi.getAllByUserId(106L).forEach(friends -> System.out.println(friends.getUserId()));
+  }
+
+  @Test
+  public void test4() {
+    System.out.println(commentApi.isLiked("5e82dc406401952928c211cd", 1L));
+  }
 }

@@ -10,10 +10,11 @@ import java.io.Serializable;
  */
 @Data
 public class SettingVo implements Serializable {
-    private Long id;
-    private String strangerQuestion="";
-    private String phone;
-    private boolean likeNotification=true;
-    private boolean pinglunNotification=true;
-    private boolean gonggaoNotification=true;
+  private static final long serialVersionUID = -1708811345255911634L;
+  private Long id;
+  private String strangerQuestion = "";
+  private String phone;
+  private boolean likeNotification = true;
+  private boolean pinglunNotification = true;
+  private boolean gonggaoNotification = true;
 }

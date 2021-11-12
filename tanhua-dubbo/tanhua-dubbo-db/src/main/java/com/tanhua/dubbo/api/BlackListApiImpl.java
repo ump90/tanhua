@@ -13,21 +13,21 @@ import java.util.List;
  * @date 2021/11/4
  */
 @DubboService
-public class BlackListApiImpl extends ServiceImpl<BlackListMapper, BlackList> implements BlackListApi{
+public class BlackListApiImpl extends ServiceImpl<BlackListMapper, BlackList>
+    implements BlackListApi {
 
+  @Override
+  public void deleteByUserId(Long userId, Long blackUserId) {
+    LambdaQueryWrapper<BlackList> listLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    listLambdaQueryWrapper.eq(BlackList::getBlackUserId, blackUserId);
+    listLambdaQueryWrapper.eq(BlackList::getUserId, userId);
+    this.remove(listLambdaQueryWrapper);
+  }
 
-    @Override
-    public void deleteByBlackUserId(Long userId,Long blackUserId) {
-        LambdaQueryWrapper<BlackList> listLambdaQueryWrapper=new LambdaQueryWrapper<>();
-        listLambdaQueryWrapper.eq(BlackList::getBlackUserId, blackUserId);
-        listLambdaQueryWrapper.eq(BlackList::getUserId, userId);
-        this.remove(listLambdaQueryWrapper);
-    }
-
-    @Override
-    public List<BlackList> getBlackListByUserId(Long userId) {
-        LambdaQueryWrapper<BlackList> listLambdaQueryWrapper=new LambdaQueryWrapper<>();
-        listLambdaQueryWrapper.eq(BlackList::getUserId, userId);
-        return this.list(listLambdaQueryWrapper);
-    }
+  @Override
+  public List<BlackList> getByUserId(Long userId) {
+    LambdaQueryWrapper<BlackList> listLambdaQueryWrapper = new LambdaQueryWrapper<>();
+    listLambdaQueryWrapper.eq(BlackList::getUserId, userId);
+    return this.list(listLambdaQueryWrapper);
+  }
 }

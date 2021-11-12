@@ -5,6 +5,7 @@ import com.tanhua.server.utils.UserThreadLocal;
 import com.tanhua.utils.JwtUtil;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -17,9 +18,16 @@ public class TokenInterceptor implements HandlerInterceptor {
   public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
       throws Exception {
     String token = request.getHeader("Authorization");
-    Boolean flag = JwtUtil.verifyToken(token);
+    boolean flag = false;
+    try {
+      flag = JwtUtil.verifyToken(token);
+    } catch (Exception e) {
+      response.sendError(401);
+      return false;
+    }
+
     if (flag) {
-      Long id = Long.parseLong((String) JwtUtil.getClaims(token).get("id")) ;
+      Long id = Long.parseLong((String) JwtUtil.getClaims(token).get("id"));
       String phone = (String) JwtUtil.getClaims(token).get("phone");
       User user = new User();
       user.setMobile(phone);
@@ -47,6 +55,7 @@ public class TokenInterceptor implements HandlerInterceptor {
   public void afterCompletion(
       HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
       throws Exception {
+    UserThreadLocal.removeUser();
     HandlerInterceptor.super.afterCompletion(request, response, handler, ex);
   }
 }

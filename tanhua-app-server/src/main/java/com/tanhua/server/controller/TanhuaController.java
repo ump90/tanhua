@@ -2,8 +2,8 @@ package com.tanhua.server.controller;
 
 import com.tanhua.pojo.RecommendUserDto;
 import com.tanhua.server.service.TanhuaService;
+import com.tanhua.vo.PageVo;
 import com.tanhua.vo.TodayBestVo;
-import com.tanhua.vo.UserPageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,8 +24,7 @@ public class TanhuaController {
   }
 
   @GetMapping("/recommendation")
-  public UserPageVo getRecommendUserPageVo(RecommendUserDto recommendUserDto) {
+  public PageVo getRecommendUserPageVo(RecommendUserDto recommendUserDto) {
     return tanhuaService.getRecommendUserPageVo(recommendUserDto);
   }
-
 }

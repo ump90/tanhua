@@ -10,12 +10,13 @@ import com.tanhua.pojo.*;
 import com.tanhua.server.utils.UserThreadLocal;
 import com.tanhua.template.AiFaceTemplate;
 import com.tanhua.template.OosTemplate;
+import com.tanhua.vo.PageVo;
 import com.tanhua.vo.SettingVo;
-import com.tanhua.vo.UserPageVo;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -92,22 +93,24 @@ public class UserInfoService {
 
   public void deleteBlackList(Long blackUserId) {
     Long userId = UserThreadLocal.getId();
-    blackListApi.deleteByBlackUserId(userId, blackUserId);
+    blackListApi.deleteByUserId(userId, blackUserId);
   }
 
-  public UserPageVo getBlackList(int page, int pageSize) {
+  public PageVo getBlackList(int page, int pageSize) {
     Page<BlackList> blackListPage = new Page<>(page, pageSize);
     IPage<BlackList> blackListIPage = blackListApi.page(blackListPage);
-    UserPageVo userPageVo = new UserPageVo();
-    userPageVo.setPages((int) blackListIPage.getPages());
-    userPageVo.setPage((int) blackListIPage.getCurrent());
-    userPageVo.setPagesize((int) blackListIPage.getSize());
+
     ArrayList<Long> blackUserIds = new ArrayList<>();
     for (BlackList blackList : blackListIPage.getRecords()) {
       blackUserIds.add(blackList.getBlackUserId());
     }
     List<UserInfo> blackUserInfoList = userInfoApi.listByIds(blackUserIds);
-    userPageVo.setItems(blackUserInfoList);
-    return userPageVo;
+
+    return PageVo.builder()
+        .pagesize((int) blackListIPage.getSize())
+        .page((int) blackListIPage.getCurrent())
+        .pages((int) blackListIPage.getPages())
+        .items((blackUserInfoList))
+        .build();
   }
 }
