@@ -14,4 +14,8 @@ public interface RecommendUserApi {
   List<RecommendUser> queryWithMaxScoreList(Long toUserId, int pageSize, int pageNum);
 
   Long count(Long toUserId);
+
+  RecommendUser query(Long userId, Long toUserId);
+
+  List<RecommendUser> queryCards(Long toUserId, int size);
 }

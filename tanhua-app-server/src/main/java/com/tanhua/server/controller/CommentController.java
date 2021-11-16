@@ -1,6 +1,7 @@
 package com.tanhua.server.controller;
 
 import com.tanhua.server.service.CommentService;
+import com.tanhua.utils.Constants;
 import com.tanhua.vo.PageVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,7 @@ public class CommentController {
     String movementId = map.get("movementId");
     String comment = map.get("comment");
     commentService.postComment(movementId, comment);
-    return ResponseEntity.ok("");
+    return ResponseEntity.ok(Constants.EMPTY_BODY);
   }
 
   @GetMapping("/{id}/like")

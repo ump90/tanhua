@@ -11,7 +11,7 @@ Content-Type: application/json
 
 {
   "phone": "13500000000",
-  "verificationCode": "254102"
+  "verificationCode": "448868"
 }
 
 > {%
@@ -64,3 +64,8 @@ Authorization: {{token}}
 ###
 GET http://localhost:1001/comments/5e82dc406401952928c211cd/like
 Authorization: {{token}}
+
+###
+GET http://localhost:1001/tanhua/cards
+Authorization: {{token}}
+

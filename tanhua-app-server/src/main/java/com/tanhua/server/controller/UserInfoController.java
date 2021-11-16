@@ -4,6 +4,7 @@ import com.tanhua.pojo.Question;
 import com.tanhua.pojo.Setting;
 import com.tanhua.pojo.UserInfo;
 import com.tanhua.server.service.UserInfoService;
+import com.tanhua.utils.Constants;
 import com.tanhua.vo.SettingVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,7 @@ public class UserInfoController {
 
   /**
    * 设置头像
+   *
    * @param multipartFile 图片
    * @return HTTP200
    * @throws IOException IO错误
@@ -33,11 +35,12 @@ public class UserInfoController {
   public ResponseEntity<Object> updateUserAvatar(@RequestBody MultipartFile multipartFile)
       throws IOException {
     userInfoService.updateUserAvatar(multipartFile);
-    return ResponseEntity.ok("");
+    return ResponseEntity.ok(Constants.EMPTY_BODY);
   }
 
   /**
    * 获取用户信息
+   *
    * @param id 用户id
    * @return userInfo
    */
@@ -50,6 +53,7 @@ public class UserInfoController {
 
   /**
    * 获取默认设置
+   *
    * @return HTTP200
    */
   @GetMapping("/settings")
@@ -60,17 +64,19 @@ public class UserInfoController {
 
   /**
    * 更新用户信息
+   *
    * @param userInfo 用户信息
    * @return HTTP200
    */
   @PutMapping
   public ResponseEntity<Object> updateUserInfo(@RequestBody UserInfo userInfo) {
     userInfoService.updateUserInfo(userInfo);
-    return ResponseEntity.ok("");
+    return ResponseEntity.ok(Constants.EMPTY_BODY);
   }
 
   /**
    * 更新用户问题
+   *
    * @param question 问题
    * @return HTTP200
    */
@@ -78,29 +84,31 @@ public class UserInfoController {
   public ResponseEntity<Object> updateUserQuestion(@RequestBody Question question) {
 
     userInfoService.updateUserQuestion(question);
-    return ResponseEntity.ok("");
+    return ResponseEntity.ok(Constants.EMPTY_BODY);
   }
 
   /**
    * 获取通知设置
+   *
    * @param setting 通知设置
    * @return HTTP200
    */
   @PostMapping("/notifications/setting")
   public ResponseEntity<Object> updateSetting(@RequestBody Setting setting) {
     userInfoService.updateSetting(setting);
-    return ResponseEntity.ok("");
+    return ResponseEntity.ok(Constants.EMPTY_BODY);
   }
 
   /**
    * 黑名单 - 移除
+   *
    * @param userId 拉黑用户ID
    * @return HTTP200
    */
   @DeleteMapping("/blacklist/{uid}")
   public ResponseEntity<Object> deleteBlackList(@PathVariable(value = "uid") Long userId) {
     userInfoService.deleteBlackList(userId);
-    return ResponseEntity.ok("");
+    return ResponseEntity.ok(Constants.EMPTY_BODY);
   }
 
   /**
@@ -115,4 +123,3 @@ public class UserInfoController {
     return ResponseEntity.ok(userInfoService.getBlackList(page, pageSize));
   }
 }
-

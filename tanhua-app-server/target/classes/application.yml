@@ -13,8 +13,12 @@ tanhua:
     access-key-secret: LHLBvXmILRoyw0niRSBuXBZewQ30la
   aip:
     appId: 24021388
-    apiKey: ZnMTwoETXnu4OPIGwGAO2H4G
+    appKey: ZnMTwoETXnu4OPIGwGAO2H4G
     appSecretKey: D4jXShyinv5q26bUS78xRKgNLnB9IfZh
+  hx:
+    appKey: 1120211112118226#demo
+    clientId: YXA6AGAtsusoSUKyw54lzXDNmw
+    clientSecret: YXA6NbJuPMuqzZrYIjNLdbWEDJNpZc4
 
 spring:
   application:

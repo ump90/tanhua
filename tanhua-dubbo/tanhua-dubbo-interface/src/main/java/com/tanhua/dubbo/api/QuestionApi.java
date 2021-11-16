@@ -7,6 +7,6 @@ import com.tanhua.pojo.Question;
  * @author UMP90
  * @date 2021/11/4
  */
-
 public interface QuestionApi extends IService<Question> {
+  Question getQuestionByUserId(Long id);
 }

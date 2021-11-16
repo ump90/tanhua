@@ -13,9 +13,10 @@ import java.io.Serializable;
 @Data
 @Document(collection = "recommend_user")
 public class RecommendUser implements Serializable {
-    private ObjectId id;
-    private Long userId;
-    private Long toUserId;
-    private Double score =0d;
-    private String date;
+  private static final long serialVersionUID = 4383196135408385506L;
+  private ObjectId id;
+  private Long userId;
+  private Long toUserId;
+  private Double score = 0d;
+  private String date;
 }

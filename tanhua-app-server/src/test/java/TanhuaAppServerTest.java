@@ -4,6 +4,7 @@ import com.tanhua.dubbo.api.MovementApi;
 import com.tanhua.mongo.Movement;
 import com.tanhua.server.service.MovementService;
 import com.tanhua.template.AiFaceTemplate;
+import com.tanhua.template.HxTemplate;
 import com.tanhua.template.OosTemplate;
 import com.tanhua.template.SmsTemplate;
 import org.apache.dubbo.config.annotation.DubboReference;
@@ -31,6 +32,7 @@ public class TanhuaAppServerTest {
   @Autowired private AiFaceTemplate aiFaceTemplate;
   @DubboReference private MovementApi movementApi;
   @Autowired private MovementService movementService;
+  @Autowired HxTemplate hxTemplate;
 
   @Test
   public void smsTemplateTest() throws ClientException {
@@ -72,4 +74,14 @@ public class TanhuaAppServerTest {
 
   @Test
   public void testRecommendMovement() {}
+
+  @Test
+  public void testhx() {
+    hxTemplate.createUser("test", "test");
+  }
+
+  @Test
+  public void testhxmsg() {
+    hxTemplate.sendSystemMessage("test", "hello");
+  }
 }

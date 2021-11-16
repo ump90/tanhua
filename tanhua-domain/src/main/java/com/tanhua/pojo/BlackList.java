@@ -14,9 +14,11 @@ import java.io.Serializable;
 @Data
 @TableName("tb_black_list")
 public class BlackList extends BasePojo implements Serializable {
-    @TableId(type = IdType.AUTO)
-    private Long id;
-    private Long userId;
-    private Long blackUserId;
+  private static final long serialVersionUID = 8900063794383574714L;
 
+  @TableId(type = IdType.AUTO)
+  private Long id;
+
+  private Long userId;
+  private Long blackUserId;
 }

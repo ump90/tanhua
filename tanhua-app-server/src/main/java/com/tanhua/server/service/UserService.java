@@ -3,6 +3,9 @@ package com.tanhua.server.service;
 import com.tanhua.dubbo.api.UserApi;
 import com.tanhua.pojo.ErrorResult;
 import com.tanhua.pojo.User;
+import com.tanhua.server.exception.BusinessException;
+import com.tanhua.server.utils.UserThreadLocal;
+import com.tanhua.template.HxTemplate;
 import com.tanhua.template.SmsTemplate;
 import com.tanhua.utils.Constants;
 import com.tanhua.utils.JwtUtil;
@@ -27,6 +30,7 @@ public class UserService {
   @Autowired private RedisTemplate<String, String> redisTemplate;
   @Autowired private SmsTemplate smsTemplate;
   @DubboReference private UserApi userApi;
+  @Autowired private HxTemplate hxTemplate;
 
   public ErrorResult sendSms(String phone) {
     String redisKey = Constants.PHONE_NUMBER + phone;
@@ -45,7 +49,7 @@ public class UserService {
     }
   }
 
-  public Object login(String phone, String code) {
+  public Map<String, String> login(String phone, String code) {
 
     String redisKey = Constants.PHONE_NUMBER + phone;
     boolean isNewUser = false;
@@ -53,11 +57,18 @@ public class UserService {
     if (user == null) {
       User newUser = new User();
       newUser.setMobile(phone);
-      newUser.setHxPassword(
+      newUser.setPassword(
           DigestUtils.md5DigestAsHex(Constants.INIT_PASSWORD.getBytes(StandardCharsets.UTF_8)));
       userApi.save(newUser);
+      User savedUser = userApi.getByPhone(phone);
+      String hxUsername = Constants.HX_USER_PREFIX + savedUser.getId();
+      savedUser.setHxUser(hxUsername);
+      savedUser.setHxPassword(Constants.INIT_PASSWORD);
+      userApi.updateById(savedUser);
+      hxTemplate.createUser(hxUsername, Constants.INIT_PASSWORD);
       isNewUser = true;
     }
+
     if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
       Long userId = userApi.getByPhone(phone).getId();
       String savedCode = redisTemplate.opsForValue().get(redisKey);
@@ -73,10 +84,21 @@ public class UserService {
         redisTemplate.delete(redisKey);
         return returnMap;
       } else {
-        return ErrorResult.loginError();
+        throw new BusinessException(ErrorResult.loginError());
       }
     } else {
-      return ErrorResult.loginError();
+      throw new BusinessException(ErrorResult.loginError());
     }
+  }
+
+  public User getById(Long userId) {
+    return userApi.getById(userId);
+  }
+
+  public void changePhone(String phone) {
+    Long userId = UserThreadLocal.getId();
+    User user = this.getById(userId);
+    user.setMobile(phone);
+    userApi.save(user);
   }
 }

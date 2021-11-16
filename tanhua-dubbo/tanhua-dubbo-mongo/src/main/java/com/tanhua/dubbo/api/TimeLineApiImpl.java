@@ -5,6 +5,7 @@ import com.tanhua.mongo.MovementTimeLine;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -19,6 +20,7 @@ public class TimeLineApiImpl implements TimeLineApi {
   @Autowired private FriendApi friendApi;
 
   @Override
+  @Async
   public void saveMovement(ObjectId movementId, Long userId) {
     List<Friend> friends = friendApi.getAllByUserId(userId);
     for (Friend friend : friends) {

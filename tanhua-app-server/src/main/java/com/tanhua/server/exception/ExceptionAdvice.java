@@ -20,8 +20,9 @@ public class ExceptionAdvice {
         .body(errorResult.getErrMessage());
   }
 
-//  @ExceptionHandler(Exception.class)
-//  public ResponseEntity<Object> otherExceptionAdvice(Exception exception) {
-//    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResult.error());
-//  }
+  @ExceptionHandler(Exception.class)
+  public ResponseEntity<Object> otherExceptionAdvice(Exception exception) {
+    exception.printStackTrace();
+    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(ErrorResult.error());
+  }
 }

@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -22,6 +23,7 @@ import java.util.List;
  */
 @DubboService
 @Slf4j
+@Service
 public class CommentApiImpl implements CommentApi {
   @Autowired private MongoTemplate mongoTemplate;
 
@@ -70,6 +72,20 @@ public class CommentApiImpl implements CommentApi {
     query.addCriteria(Criteria.where("publishId").is(new ObjectId(movementId)));
     query.addCriteria(Criteria.where("userId").is(userId));
     query.addCriteria(Criteria.where("commentType").is(CommentType.LIKE.getType()));
+    Comment comment = mongoTemplate.findOne(query, Comment.class);
+
+    if (comment != null) {
+      log.info(comment.toString());
+    }
+    return comment != null;
+  }
+
+  @Override
+  public Boolean isLoved(String movementId, Long userId) {
+    Query query = new Query();
+    query.addCriteria(Criteria.where("publishId").is(new ObjectId(movementId)));
+    query.addCriteria(Criteria.where("userId").is(userId));
+    query.addCriteria(Criteria.where("commentType").is(CommentType.LOVE.getType()));
     Comment comment = mongoTemplate.findOne(query, Comment.class);
 
     if (comment != null) {

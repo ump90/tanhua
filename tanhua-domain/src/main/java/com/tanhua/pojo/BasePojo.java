@@ -10,12 +10,12 @@ import java.time.LocalDateTime;
  * @author UMP90
  * @date 2021/10/30
  */
-
 public class BasePojo implements Serializable {
-    @TableField(fill = FieldFill.INSERT)
-    private LocalDateTime created;
+  private static final long serialVersionUID = 7297495510098499808L;
 
-    @TableField(fill = FieldFill.INSERT_UPDATE)
-    private LocalDateTime updated;
+  @TableField(fill = FieldFill.INSERT)
+  private LocalDateTime created;
 
+  @TableField(fill = FieldFill.INSERT_UPDATE)
+  private LocalDateTime updated;
 }

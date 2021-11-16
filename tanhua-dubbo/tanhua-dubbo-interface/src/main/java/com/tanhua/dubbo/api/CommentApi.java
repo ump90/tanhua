@@ -18,4 +18,6 @@ public interface CommentApi {
   Boolean isLiked(String movementId, Long userId);
 
   Integer delete(Comment comment);
+
+  Boolean isLoved(String movementId, Long userId);
 }

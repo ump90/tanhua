@@ -121,7 +121,7 @@ public class CommentService {
   public Integer love(String movementId) {
     Movement movement = movementApi.getById(movementId);
     Long userId = UserThreadLocal.getId();
-    Boolean isLoved = commentApi.isLiked(movementId, userId);
+    Boolean isLoved = commentApi.isLoved(movementId, userId);
     if (isLoved) {
       throw new BusinessException(ErrorResult.likeError());
     }
@@ -143,7 +143,7 @@ public class CommentService {
   public Integer unlove(String movementId) {
     Movement movement = movementApi.getById(movementId);
     Long userId = UserThreadLocal.getId();
-    Boolean isLoved = commentApi.isLiked(movementId, userId);
+    Boolean isLoved = commentApi.isLoved(movementId, userId);
     if (!isLoved) {
       throw new BusinessException(ErrorResult.disloveError());
     }

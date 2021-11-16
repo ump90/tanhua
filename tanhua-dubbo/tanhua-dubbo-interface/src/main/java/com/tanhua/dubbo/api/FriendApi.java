@@ -10,4 +10,8 @@ import java.util.List;
  */
 public interface FriendApi {
   List<Friend> getAllByUserId(Long userId);
+
+  void save(Friend friend);
+
+  Boolean isFriend(Long userId, Long friendId);
 }

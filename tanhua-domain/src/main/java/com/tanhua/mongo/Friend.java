@@ -1,5 +1,6 @@
 package com.tanhua.mongo;
 
+import lombok.Builder;
 import lombok.Data;
 import org.bson.types.ObjectId;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -12,6 +13,7 @@ import java.io.Serializable;
  */
 @Data
 @Document(collection = "friend")
+@Builder
 public class Friend implements Serializable {
 
   private static final long serialVersionUID = 5747610158934324740L;

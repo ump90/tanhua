@@ -14,6 +14,8 @@ import java.io.Serializable;
 @Data
 @TableName("tb_question")
 public class Question extends BasePojo implements Serializable {
+  private static final long serialVersionUID = -4674788979904884200L;
+
   @TableId(type = IdType.AUTO)
   private Long id;
 

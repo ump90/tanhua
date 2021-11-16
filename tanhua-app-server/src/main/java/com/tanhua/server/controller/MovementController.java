@@ -3,6 +3,7 @@ package com.tanhua.server.controller;
 import com.tanhua.mongo.Movement;
 import com.tanhua.server.service.MovementService;
 import com.tanhua.server.utils.UserThreadLocal;
+import com.tanhua.utils.Constants;
 import com.tanhua.vo.MovementVo;
 import com.tanhua.vo.PageVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +27,7 @@ public class MovementController {
   public ResponseEntity<Object> publishMovement(Movement movement, MultipartFile[] files)
       throws IOException {
     movementService.sendMovement(movement, files);
-    return ResponseEntity.ok("");
+    return ResponseEntity.ok(Constants.EMPTY_BODY);
   }
 
   @GetMapping("/all")
