@@ -1,7 +1,7 @@
 package com.tanhua.dubbo.api;
 
 import cn.hutool.core.collection.CollUtil;
-import com.tanhua.pojo.UserLocation;
+import com.tanhua.mongo.UserLocation;
 import org.apache.dubbo.config.annotation.DubboService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.geo.Circle;

@@ -32,6 +32,8 @@ public class UserService {
   @DubboReference private UserApi userApi;
   @Autowired private HxTemplate hxTemplate;
 
+  // 发送短信
+
   public ErrorResult sendSms(String phone) {
     String redisKey = Constants.PHONE_NUMBER + phone;
     if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
@@ -49,8 +51,9 @@ public class UserService {
     }
   }
 
-  public Map<String, String> login(String phone, String code) {
+  // 登陆验证
 
+  public Map<String, String> login(String phone, String code) {
     String redisKey = Constants.PHONE_NUMBER + phone;
     boolean isNewUser = false;
     User user = userApi.getByPhone(phone);
@@ -84,7 +87,7 @@ public class UserService {
         redisTemplate.delete(redisKey);
         return returnMap;
       } else {
-        throw new BusinessException(ErrorResult.loginError());
+        throw new BusinessException(ErrorResult.loginCheckError());
       }
     } else {
       throw new BusinessException(ErrorResult.loginError());
@@ -95,9 +98,14 @@ public class UserService {
     return userApi.getById(userId);
   }
 
+  // 修改手机号
+
   public void changePhone(String phone) {
     Long userId = UserThreadLocal.getId();
     User user = this.getById(userId);
+    if (phone.equals(user.getMobile())) {
+      return;
+    }
     user.setMobile(phone);
     userApi.save(user);
   }

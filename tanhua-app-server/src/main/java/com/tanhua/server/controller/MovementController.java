@@ -1,6 +1,8 @@
 package com.tanhua.server.controller;
 
+import com.tanhua.enums.CommentType;
 import com.tanhua.mongo.Movement;
+import com.tanhua.server.service.CommentService;
 import com.tanhua.server.service.MovementService;
 import com.tanhua.server.utils.UserThreadLocal;
 import com.tanhua.utils.Constants;
@@ -22,6 +24,7 @@ import java.io.IOException;
 @RequestMapping("/movements")
 public class MovementController {
   @Autowired private MovementService movementService;
+  @Autowired private CommentService commentService;
 
   @PostMapping
   public ResponseEntity<Object> publishMovement(Movement movement, MultipartFile[] files)
@@ -64,5 +67,34 @@ public class MovementController {
   public ResponseEntity<Object> getMovementById(@PathVariable String id) {
     MovementVo movementVo = movementService.getSingleMovementById(id);
     return ResponseEntity.ok(movementVo);
+  }
+
+  @GetMapping("/visitors")
+  public ResponseEntity<Object> getVisitors() {
+    return ResponseEntity.ok(movementService.getVisitors());
+  }
+
+  @GetMapping("/{id}/like")
+  public ResponseEntity<Object> like(@PathVariable(value = "id") String commentId) {
+    Integer count = commentService.commentAction(CommentType.LIKE, true, commentId);
+    return ResponseEntity.ok(count);
+  }
+
+  @GetMapping("/{id}/dislike")
+  public ResponseEntity<Object> unlike(@PathVariable(value = "id") String commentId) {
+    Integer count = commentService.commentAction(CommentType.LIKE, false, commentId);
+    return ResponseEntity.ok(count);
+  }
+
+  @GetMapping("/{id}/love")
+  public ResponseEntity<Object> love(@PathVariable(value = "id") String commentId) {
+    Integer count = commentService.commentAction(CommentType.LOVE, true, commentId);
+    return ResponseEntity.ok(count);
+  }
+
+  @GetMapping("/{id}/unlove")
+  public ResponseEntity<Object> unlove(@PathVariable(value = "id") String commentId) {
+    Integer count = commentService.commentAction(CommentType.LOVE, false, commentId);
+    return ResponseEntity.ok(count);
   }
 }

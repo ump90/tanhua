@@ -1,4 +1,4 @@
-package com.tanhua.pojo;
+package com.tanhua.mongo;
 
 import lombok.Data;
 import org.bson.types.ObjectId;
@@ -22,7 +22,7 @@ public class UserLocation implements Serializable {
   @Indexed private Long userId;
   private GeoJsonPoint location;
   private String address;
+  private Long lastUpdated;
   private Long created;
   private Long updated;
-  private Long lastUpdated;
 }

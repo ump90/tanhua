@@ -22,4 +22,6 @@ public class Constants {
   public static final String EMPTY_BODY = "";
   public static final String USER_LOVE_KEY = "USER_LOVE_KEY_";
   public static final String USER_UNLOVED_KEY = "USER_UNLOVED_KEY_";
+  public static final String USER_LATEST_TIME = "USER_LATEST_TIME_";
+  public static final String COMMENTS_INTERACT_KEY = "COMMENTS_INTERACT_KEY_";
 }

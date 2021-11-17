@@ -15,6 +15,7 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.TypedAggregation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -24,6 +25,7 @@ import java.util.List;
  * @date 2021/11/7
  */
 @DubboService
+@Service
 public class MovementApiImpl implements MovementApi {
   @Autowired private MongoTemplate mongoTemplate;
   @Autowired private IdWorker idWorker;
@@ -93,7 +95,8 @@ public class MovementApiImpl implements MovementApi {
 
   @Override
   public Movement getById(String id) {
-    return mongoTemplate.findById(id, Movement.class);
+
+    return mongoTemplate.findById(new ObjectId(id), Movement.class);
   }
 
   @Override

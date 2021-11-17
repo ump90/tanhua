@@ -1,5 +1,6 @@
 package com.tanhua.server.controller;
 
+import com.tanhua.enums.CommentType;
 import com.tanhua.server.service.CommentService;
 import com.tanhua.utils.Constants;
 import com.tanhua.vo.PageVo;
@@ -37,25 +38,13 @@ public class CommentController {
 
   @GetMapping("/{id}/like")
   public ResponseEntity<Object> like(@PathVariable(value = "id") String commentId) {
-    Integer count = commentService.like(commentId);
+    Integer count = commentService.commentAction(CommentType.LIKE, true, commentId);
     return ResponseEntity.ok(count);
   }
 
   @GetMapping("/{id}/dislike")
   public ResponseEntity<Object> unlike(@PathVariable(value = "id") String commentId) {
-    Integer count = commentService.unlike(commentId);
-    return ResponseEntity.ok(count);
-  }
-
-  @GetMapping("/{id}/love")
-  public ResponseEntity<Object> love(@PathVariable(value = "id") String commentId) {
-    Integer count = commentService.love(commentId);
-    return ResponseEntity.ok(count);
-  }
-
-  @GetMapping("/{id}/unlove")
-  public ResponseEntity<Object> unlove(@PathVariable(value = "id") String commentId) {
-    Integer count = commentService.unlove(commentId);
+    Integer count = commentService.commentAction(CommentType.LIKE, false, commentId);
     return ResponseEntity.ok(count);
   }
 }

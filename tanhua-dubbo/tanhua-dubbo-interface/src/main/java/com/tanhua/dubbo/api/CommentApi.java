@@ -1,5 +1,6 @@
 package com.tanhua.dubbo.api;
 
+import com.tanhua.enums.CommentType;
 import com.tanhua.mongo.Comment;
 
 import java.util.List;
@@ -15,9 +16,11 @@ public interface CommentApi {
 
   Integer save(Comment comment);
 
-  Boolean isLiked(String movementId, Long userId);
-
   Integer delete(Comment comment);
 
-  Boolean isLoved(String movementId, Long userId);
+  Boolean isCommented(String movementId, Long userId, CommentType commentType);
+
+  Boolean checkIsToComment(String id);
+
+  Comment getById(String id);
 }

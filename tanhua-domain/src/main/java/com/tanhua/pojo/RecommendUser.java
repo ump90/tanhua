@@ -12,7 +12,7 @@ import java.io.Serializable;
  */
 @Data
 @Document(collection = "recommend_user")
-public class RecommendUser implements Serializable {
+public class RecommendUser extends BasePojo implements Serializable {
   private static final long serialVersionUID = 4383196135408385506L;
   private ObjectId id;
   private Long userId;

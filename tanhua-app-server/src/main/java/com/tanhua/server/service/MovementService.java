@@ -3,7 +3,9 @@ package com.tanhua.server.service;
 import cn.hutool.core.collection.CollUtil;
 import com.tanhua.dubbo.api.MovementApi;
 import com.tanhua.dubbo.api.UserInfoApi;
+import com.tanhua.dubbo.api.VisitorApi;
 import com.tanhua.mongo.Movement;
+import com.tanhua.mongo.Visitor;
 import com.tanhua.pojo.ErrorResult;
 import com.tanhua.pojo.UserInfo;
 import com.tanhua.server.exception.BusinessException;
@@ -13,8 +15,10 @@ import com.tanhua.utils.Constants;
 import com.tanhua.utils.PageUtil;
 import com.tanhua.vo.MovementVo;
 import com.tanhua.vo.PageVo;
+import com.tanhua.vo.TodayBestVo;
 import org.apache.commons.lang.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
@@ -24,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author UMP90
@@ -33,7 +38,8 @@ import java.util.List;
 public class MovementService {
   @DubboReference private MovementApi movementApi;
   @DubboReference private UserInfoApi userInfoApi;
-  @Autowired private RedisTemplate<String, String> redisTemplate;
+  @DubboReference private VisitorApi visitorApi;
+  @Autowired private RedisTemplate<String, Object> redisTemplate;
   @Autowired private OosTemplate oosTemplate;
 
   /**
@@ -76,20 +82,19 @@ public class MovementService {
     pageVo.setPage(page);
     pageVo.setPagesize(pageSize);
     pageVo.setPages(PageUtil.convertPage(pageSize, pageVo.getCounts()));
+
     return pageVo;
   }
 
   public PageVo getAllMovementOfFriends(Long userId, Integer page, Integer pageSize) {
-
     List<Movement> movementList = movementApi.listFriends(userId, page, pageSize);
-
     if (movementList.size() == 0) {
       return PageVo.builder().build();
     }
     ArrayList<MovementVo> movementVoArrayList = convertMovementToVo(movementList);
-
     int counts = Math.toIntExact(movementApi.countByFriendId(userId));
     int pages = PageUtil.convertPage(pageSize, counts);
+
     return PageVo.builder()
         .page(page)
         .counts(counts)
@@ -101,7 +106,8 @@ public class MovementService {
 
   public PageVo getRecommendMovement(Integer page, Integer pageSize) {
     String recommendMovementRedisKey = Constants.MOVEMENTS_RECOMMEND + UserThreadLocal.getId();
-    String recommendMovementPidString = redisTemplate.opsForValue().get(recommendMovementRedisKey);
+    String recommendMovementPidString =
+        (String) redisTemplate.opsForValue().get(recommendMovementRedisKey);
     List<Movement> movementList = new ArrayList<>();
     if (recommendMovementPidString == null) {
       movementList = movementApi.getRandom(pageSize);
@@ -142,10 +148,41 @@ public class MovementService {
       userInfoHashMap.put(userInfo.getId(), userInfo);
     }
     ArrayList<MovementVo> movementVoArrayList = new ArrayList<>();
+    Long userId = UserThreadLocal.getId();
     for (Movement movement : movementList) {
-      movementVoArrayList.add(
-          MovementVo.initMovementVo(movement, userInfoHashMap.get(movement.getUserId())));
+      MovementVo vo =
+          MovementVo.initMovementVo(movement, userInfoHashMap.get(movement.getUserId()));
+      String redisKey = Constants.MOVEMENTS_INTERACT_KEY + movement.getId().toHexString();
+      String likeHashKey = Constants.MOVEMENT_LIKE_HASHKEY + userId;
+      String loveHashKey = Constants.MOVEMENT_LOVE_HASHKEY + userId;
+      if (redisTemplate.opsForHash().hasKey(redisKey, likeHashKey)) {
+        vo.setHasLiked(1);
+      }
+      if (redisTemplate.opsForHash().hasKey(redisKey, loveHashKey)) {
+        vo.setHasLoved(1);
+      }
+      movementVoArrayList.add(vo);
     }
     return movementVoArrayList;
+  }
+
+  public List<TodayBestVo> getVisitors() {
+    Long userId = UserThreadLocal.getId();
+    Long lastQueryTime =
+        (Long) redisTemplate.opsForValue().get(Constants.USER_LATEST_TIME + userId);
+    List<Visitor> visitorList = visitorApi.getVisitorId(userId, lastQueryTime);
+    List<Long> userList = CollUtil.getFieldValues(visitorList, "visitorUserId", Long.class);
+    List<UserInfo> userInfoList = userInfoApi.listByIds(userList);
+    Map<Long, UserInfo> userInfoHashMap = CollUtil.fieldValueMap(userInfoList, "id");
+    ArrayList<TodayBestVo> todayBestVos = new ArrayList<>(userInfoList.size());
+    for (Visitor visitor : visitorList) {
+      TodayBestVo todayBestVo = new TodayBestVo();
+      UserInfo userInfo = userInfoHashMap.get(visitor.getVisitorUserId());
+      BeanUtils.copyProperties(userInfo, todayBestVo);
+      todayBestVo.setTags(userInfo.getTags().split(","));
+      todayBestVo.setFateValue(Math.toIntExact(Math.round(visitor.getScore())));
+      todayBestVos.add(todayBestVo);
+    }
+    return todayBestVos;
   }
 }

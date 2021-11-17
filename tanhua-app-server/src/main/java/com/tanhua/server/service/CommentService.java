@@ -22,8 +22,8 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author UMP90
@@ -42,16 +42,21 @@ public class CommentService {
     List<Comment> commentList = commentApi.listByMovementId(page, pageSize, movementId);
     List<Long> userIds = CollUtil.getFieldValues(commentList, "userId", Long.class);
     List<UserInfo> userInfoList = userInfoApi.listByIds(userIds);
-    HashMap<Long, UserInfo> userInfoHashMap = new HashMap<>();
-    userInfoList.forEach(
-        userInfo -> {
-          userInfoHashMap.put(userInfo.getId(), userInfo);
-        });
+
+    Map<Long, UserInfo> userInfoHashMap = CollUtil.fieldValueMap(userInfoList, "id");
+
     List<CommentVo> commentVos = new ArrayList<>();
+    Long userId = UserThreadLocal.getId();
     commentList.forEach(
         comment -> {
           UserInfo userInfo = userInfoHashMap.get(comment.getUserId());
-          commentVos.add(CommentVo.init(userInfo, comment));
+          CommentVo commentVo = CommentVo.init(userInfo, comment);
+          String redisKey = Constants.COMMENTS_INTERACT_KEY + comment.getId().toHexString();
+          String hashKey = Constants.MOVEMENT_LIKE_HASHKEY + userId;
+          if (redisTemplate.opsForHash().hasKey(redisKey, hashKey)) {
+            commentVo.setHasLiked(1);
+          }
+          commentVos.add(commentVo);
         });
     return PageVo.builder()
         .page(page)
@@ -78,83 +83,78 @@ public class CommentService {
     movement.setCommentCount(movement.getCommentCount() + 1);
   }
 
-  public Integer like(String movementId) {
-    Movement movement = movementApi.getById(movementId);
+  public Integer commentAction(CommentType commentType, Boolean actionDirection, String id) {
+
+    Boolean isToComment = commentApi.checkIsToComment(id);
     Long userId = UserThreadLocal.getId();
-    Boolean isLiked = commentApi.isLiked(movementId, userId);
-    if (isLiked) {
-      throw new BusinessException(ErrorResult.likeError());
+    Boolean isCommented = commentApi.isCommented(id, userId, commentType);
+    // 检查是否重复操作
+    if (actionDirection) {
+      if (isCommented) {
+        switch (commentType.getType()) {
+          case 1:
+            throw new BusinessException(ErrorResult.likeError());
+          case 3:
+            throw new BusinessException(ErrorResult.loveError());
+          default:
+            break;
+        }
+      }
+    } else {
+      if (!isCommented) {
+        switch (commentType.getType()) {
+          case 1:
+            throw new BusinessException(ErrorResult.disLikeError());
+          case 3:
+            throw new BusinessException(ErrorResult.disloveError());
+          default:
+            break;
+        }
+      }
+    }
+    // 构造redisKey
+
+    String hashKey = null;
+    String redisKey = null;
+    Long publishUserId = null;
+    if (isToComment) {
+      Comment comment = commentApi.getById(id);
+      publishUserId = comment.getUserId();
+      redisKey = Constants.COMMENTS_INTERACT_KEY + id;
+      if (commentType.getType() == 1) {
+        hashKey = Constants.MOVEMENT_LIKE_HASHKEY + userId;
+      } else if (commentType.getType() == 3) {
+        hashKey = Constants.MOVEMENT_LOVE_HASHKEY + userId;
+      }
+
+    } else {
+      Movement movement = movementApi.getById(id);
+      publishUserId = movement.getUserId();
+      redisKey = Constants.MOVEMENTS_INTERACT_KEY + id;
+      if (commentType.getType() == 1) {
+        hashKey = Constants.MOVEMENT_LIKE_HASHKEY + userId;
+      } else if (commentType.getType() == 3) {
+        hashKey = Constants.MOVEMENT_LOVE_HASHKEY + userId;
+      }
+    }
+
+    if (hashKey == null) {
+      throw new RuntimeException("redis hashKey is null");
     }
     Comment comment =
         Comment.builder()
-            .publishUserId(movement.getUserId())
+            .commentType(commentType.getType())
+            .publishId(new ObjectId(id))
             .userId(userId)
             .created(System.currentTimeMillis())
-            .commentType(CommentType.LIKE.getType())
-            .publishId(new ObjectId(movementId))
+            .publishUserId(publishUserId)
             .build();
-
-    Integer count = commentApi.save(comment);
-    String redisMovementId = Constants.MOVEMENT_LIKE_HASHKEY + String.valueOf(movementId);
-    redisTemplate.opsForHash().put(redisMovementId, String.valueOf(comment.getUserId()), 1);
-    return count;
-  }
-
-  public Integer unlike(String movementId) {
-    Movement movement = movementApi.getById(movementId);
-    Long userId = UserThreadLocal.getId();
-    Boolean isLiked = commentApi.isLiked(movementId, userId);
-    if (!isLiked) {
-      throw new BusinessException(ErrorResult.disLikeError());
+    if (actionDirection) {
+      redisTemplate.opsForHash().put(redisKey, hashKey, 1);
+      return commentApi.save(comment);
+    } else {
+      redisTemplate.opsForHash().delete(redisKey, hashKey);
+      return commentApi.delete(comment);
     }
-    Comment comment =
-        Comment.builder()
-            .commentType(CommentType.LIKE.getType())
-            .publishId(new ObjectId(movementId))
-            .userId(userId)
-            .build();
-    String redisMovementId = Constants.MOVEMENT_LIKE_HASHKEY + String.valueOf(movementId);
-    redisTemplate.opsForHash().delete(redisMovementId, String.valueOf(comment.getUserId()));
-    return commentApi.delete(comment);
-  }
-
-  public Integer love(String movementId) {
-    Movement movement = movementApi.getById(movementId);
-    Long userId = UserThreadLocal.getId();
-    Boolean isLoved = commentApi.isLoved(movementId, userId);
-    if (isLoved) {
-      throw new BusinessException(ErrorResult.likeError());
-    }
-    Comment comment =
-        Comment.builder()
-            .publishUserId(movement.getUserId())
-            .userId(userId)
-            .created(System.currentTimeMillis())
-            .commentType(CommentType.LOVE.getType())
-            .publishId(new ObjectId(movementId))
-            .build();
-
-    Integer count = commentApi.save(comment);
-    String redisMovementId = Constants.MOVEMENT_LOVE_HASHKEY + String.valueOf(movementId);
-    redisTemplate.opsForHash().put(redisMovementId, String.valueOf(comment.getUserId()), 1);
-    return count;
-  }
-
-  public Integer unlove(String movementId) {
-    Movement movement = movementApi.getById(movementId);
-    Long userId = UserThreadLocal.getId();
-    Boolean isLoved = commentApi.isLoved(movementId, userId);
-    if (!isLoved) {
-      throw new BusinessException(ErrorResult.disloveError());
-    }
-    Comment comment =
-        Comment.builder()
-            .commentType(CommentType.LOVE.getType())
-            .publishId(new ObjectId(movementId))
-            .userId(userId)
-            .build();
-    String redisMovementId = Constants.MOVEMENT_LOVE_HASHKEY + String.valueOf(movementId);
-    redisTemplate.opsForHash().delete(redisMovementId, String.valueOf(comment.getUserId()));
-    return commentApi.delete(comment);
   }
 }

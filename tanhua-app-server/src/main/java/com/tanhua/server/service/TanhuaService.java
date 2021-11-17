@@ -3,6 +3,7 @@ package com.tanhua.server.service;
 import cn.hutool.core.collection.CollUtil;
 import com.tanhua.dubbo.api.*;
 import com.tanhua.mongo.UserLike;
+import com.tanhua.mongo.Visitor;
 import com.tanhua.pojo.RecommendUser;
 import com.tanhua.pojo.RecommendUserDto;
 import com.tanhua.pojo.User;
@@ -21,6 +22,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,7 @@ public class TanhuaService {
   @DubboReference private QuestionApi questionApi;
   @DubboReference private UserApi userApi;
   @DubboReference private UserLikeApi userLikeApi;
+  @DubboReference private VisitorApi visitorApi;
   @Autowired private HxTemplate hxTemplate;
   @Autowired private RedisTemplate<String, String> redisTemplate;
   @Autowired private MessageService messageService;
@@ -98,8 +101,27 @@ public class TanhuaService {
       todayBestVo.setTags(tags);
     }
     Long toUserId = UserThreadLocal.getId();
-    Integer fateValue = recommendUserApi.query(userId, toUserId).getScore().intValue();
+    RecommendUser recommendUser = recommendUserApi.query(userId, toUserId);
+    Integer fateValue = recommendUser.getScore().intValue();
     todayBestVo.setFateValue(fateValue);
+
+    // 记录浏览用户
+    Long date = System.currentTimeMillis();
+    SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd");
+    String dateString = simpleDateFormat.format(date);
+
+    if (visitorApi.isVisited(userId, dateString)) {
+      return todayBestVo;
+    }
+
+    Visitor visitor = new Visitor();
+    visitor.setDate(date);
+    visitor.setFrom("首页");
+    visitor.setVisitDate(dateString);
+    visitor.setVisitorUserId(userId);
+    visitor.setUserId(toUserId);
+    visitor.setScore(recommendUser.getScore());
+    visitorApi.saveVisitor(visitor);
     return todayBestVo;
   }
 

@@ -53,7 +53,8 @@ public class CommentApiImpl implements CommentApi {
   @Override
   public Integer save(Comment comment) {
     mongoTemplate.save(comment);
-    return modifyMovement(comment, 1);
+    boolean isToComment = checkIsToComment(comment.getPublishId().toHexString());
+    return modifyMovementAndComment(comment, 1, !isToComment);
   }
 
   @Override
@@ -63,41 +64,34 @@ public class CommentApiImpl implements CommentApi {
     query.addCriteria(Criteria.where("userId").is(comment.getUserId()));
     query.addCriteria(Criteria.where("commentType").is(comment.getCommentType()));
     mongoTemplate.remove(query, Comment.class);
-    return modifyMovement(comment, -1);
+    boolean isToComment = checkIsToComment(comment.getPublishId().toHexString());
+    return modifyMovementAndComment(comment, -1, !isToComment);
   }
 
   @Override
-  public Boolean isLiked(String movementId, Long userId) {
+  public Boolean isCommented(String movementId, Long userId, CommentType commentType) {
     Query query = new Query();
     query.addCriteria(Criteria.where("publishId").is(new ObjectId(movementId)));
     query.addCriteria(Criteria.where("userId").is(userId));
-    query.addCriteria(Criteria.where("commentType").is(CommentType.LIKE.getType()));
-    Comment comment = mongoTemplate.findOne(query, Comment.class);
-
-    if (comment != null) {
-      log.info(comment.toString());
-    }
-    return comment != null;
+    query.addCriteria(Criteria.where("commentType").is(commentType.getType()));
+    return mongoTemplate.exists(query, Comment.class);
   }
 
   @Override
-  public Boolean isLoved(String movementId, Long userId) {
-    Query query = new Query();
-    query.addCriteria(Criteria.where("publishId").is(new ObjectId(movementId)));
-    query.addCriteria(Criteria.where("userId").is(userId));
-    query.addCriteria(Criteria.where("commentType").is(CommentType.LOVE.getType()));
-    Comment comment = mongoTemplate.findOne(query, Comment.class);
-
-    if (comment != null) {
-      log.info(comment.toString());
-    }
-    return comment != null;
+  public Boolean checkIsToComment(String id) {
+    Query query = new Query(Criteria.where("id").is(new ObjectId(id)));
+    return mongoTemplate.exists(query, Comment.class);
   }
 
-  private Integer modifyMovement(Comment comment, Integer interval) {
+  @Override
+  public Comment getById(String id) {
+    Query query = new Query(Criteria.where("id").is(id));
+    return mongoTemplate.findOne(query, Comment.class);
+  }
+
+  private Integer modifyMovementAndComment(Comment comment, Integer interval, boolean isMovement) {
     Integer type = comment.getCommentType();
     Update update = new Update();
-    Query query = new Query(Criteria.where("id").is(comment.getPublishId()));
     FindAndModifyOptions options = new FindAndModifyOptions();
     options.returnNew(true);
     if (type == CommentType.LIKE.getType()) {
@@ -107,18 +101,29 @@ public class CommentApiImpl implements CommentApi {
     } else if (type == CommentType.LOVE.getType()) {
       update.inc("loveCount", interval);
     }
-    Movement movement = mongoTemplate.findAndModify(query, update, options, Movement.class);
-    if (movement != null) {
-      if (type == CommentType.LIKE.getType()) {
-        return movement.getLikeCount();
-      } else if (type == CommentType.COMMENT.getType()) {
-        return movement.getCommentCount();
-      } else if (type == CommentType.LOVE.getType()) {
-        return movement.getLoveCount();
+    if (isMovement) {
+      Query query = new Query(Criteria.where("id").is(comment.getPublishId()));
+      Movement movement = mongoTemplate.findAndModify(query, update, options, Movement.class);
+      if (movement != null) {
+        if (type == CommentType.LIKE.getType()) {
+          return movement.getLikeCount();
+        } else if (type == CommentType.COMMENT.getType()) {
+          return movement.getCommentCount();
+        } else if (type == CommentType.LOVE.getType()) {
+          return movement.getLoveCount();
+        }
+      } else {
+        return -1;
       }
     } else {
+      Query query = new Query(Criteria.where("id").is(comment.getPublishId()));
+      Comment returnedComment = mongoTemplate.findAndModify(query, update, options, Comment.class);
+      if (returnedComment != null) {
+        return returnedComment.getLikeCount();
+      }
       return -1;
     }
+
     return -1;
   }
 }

@@ -1,6 +1,6 @@
 package com.tanhua.dubbo.api;
 
-import com.tanhua.pojo.UserLocation;
+import com.tanhua.mongo.UserLocation;
 
 import java.util.List;
 

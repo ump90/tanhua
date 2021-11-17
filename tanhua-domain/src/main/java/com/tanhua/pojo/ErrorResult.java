@@ -37,6 +37,10 @@ public class ErrorResult implements Serializable {
     return ErrorResult.builder().errCode("000002").errMessage("验证码失效").build();
   }
 
+  public static ErrorResult loginCheckError() {
+    return ErrorResult.builder().errCode("000010").errMessage("验证码错误").build();
+  }
+
   public static ErrorResult faceError() {
     return ErrorResult.builder().errCode("000003").errMessage("图片非人像，请重新上传!").build();
   }

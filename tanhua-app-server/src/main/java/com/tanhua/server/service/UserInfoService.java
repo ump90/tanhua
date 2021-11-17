@@ -88,6 +88,7 @@ public class UserInfoService {
     settingVo.setGonggaoNotification(setting.getGonggaoNotification() == 1);
     settingVo.setLikeNotification(setting.getLikeNotification() == 1);
     settingVo.setPinglunNotification(setting.getPinglunNotification() == 1);
+    settingVo.setStrangerQuestion("你喜欢java吗?");
     return settingVo;
   }
 
