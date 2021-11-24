@@ -40,7 +40,7 @@ public class MovementVo implements Serializable {
   private Integer hasLiked; // 是否点赞（1是，0否）
   private Integer hasLoved; // 是否喜欢（1是，0否）
 
-  public static MovementVo initMovementVo(Movement movement, UserInfo userInfo) {
+  public static MovementVo init(Movement movement, UserInfo userInfo) {
     MovementVo movementVo = MovementVo.builder().build();
     BeanUtils.copyProperties(movement, movementVo);
     BeanUtils.copyProperties(userInfo, movementVo);

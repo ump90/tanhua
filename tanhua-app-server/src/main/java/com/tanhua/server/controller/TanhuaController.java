@@ -73,7 +73,7 @@ public class TanhuaController {
 
   @GetMapping("/{id}/unlove")
   public ResponseEntity<Object> unlove(@PathVariable("id") Long id) {
-    tanhuaService.like(UserThreadLocal.getId(), id);
+    tanhuaService.unlike(UserThreadLocal.getId(), id);
     return ResponseEntity.ok(Constants.EMPTY_BODY);
   }
 

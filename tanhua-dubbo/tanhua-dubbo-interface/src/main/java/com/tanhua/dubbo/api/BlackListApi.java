@@ -10,7 +10,7 @@ import java.util.List;
  * @date 2021/11/4
  */
 public interface BlackListApi extends IService<BlackList> {
-  void deleteByUserId(Long userId, Long BlackUserId);
+  void deleteByUserId(Long userId, Long blackUserId);
 
   List<BlackList> getByUserId(Long userId);
 }

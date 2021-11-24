@@ -46,6 +46,17 @@ public class MovementApiImpl implements MovementApi {
   public List<Movement> list(Long userId, Integer page, Integer pageSize) {
     Criteria criteria = new Criteria();
     criteria.and("userId").is(userId);
+    return getMovements(page, pageSize, criteria);
+  }
+
+  @Override
+  public List<Movement> list(Long userId, Integer page, Integer pageSize, Integer status) {
+    Criteria criteria = new Criteria();
+    criteria.and("userId").is(userId).and("status").is(status);
+    return getMovements(page, pageSize, criteria);
+  }
+
+  private List<Movement> getMovements(Integer page, Integer pageSize, Criteria criteria) {
     Sort sort = Sort.by(Sort.Order.asc("created"));
     Query query = new Query();
     query.addCriteria(criteria);
@@ -58,6 +69,12 @@ public class MovementApiImpl implements MovementApi {
   @Override
   public Long countByUserId(Long userId) {
     Query query = new Query(Criteria.where("userId").is(userId));
+    return mongoTemplate.count(query, Movement.class);
+  }
+
+  @Override
+  public Long countByUserId(Long userId, Integer status) {
+    Query query = new Query(Criteria.where("userId").is(userId).and("status").is(status));
     return mongoTemplate.count(query, Movement.class);
   }
 
@@ -95,8 +112,7 @@ public class MovementApiImpl implements MovementApi {
 
   @Override
   public Movement getById(String id) {
-
-    return mongoTemplate.findById(new ObjectId(id), Movement.class);
+    return mongoTemplate.findById(id, Movement.class);
   }
 
   @Override
@@ -106,6 +122,8 @@ public class MovementApiImpl implements MovementApi {
     if (movement != null) {
       if (commentType == CommentType.COMMENT.getType()) {
         movement.setCommentCount(movement.getCommentCount() + 1);
+      } else if (commentType == CommentType.LIKE.getType()) {
+
       }
     }
   }

@@ -1,5 +1,6 @@
 package com.tanhua.server.controller;
 
+import com.tanhua.enums.CommentTarget;
 import com.tanhua.enums.CommentType;
 import com.tanhua.mongo.Movement;
 import com.tanhua.server.service.CommentService;
@@ -76,25 +77,29 @@ public class MovementController {
 
   @GetMapping("/{id}/like")
   public ResponseEntity<Object> like(@PathVariable(value = "id") String commentId) {
-    Integer count = commentService.commentAction(CommentType.LIKE, true, commentId);
+    Integer count =
+        commentService.commentAction(CommentType.LIKE, true, commentId, CommentTarget.Movement);
     return ResponseEntity.ok(count);
   }
 
   @GetMapping("/{id}/dislike")
   public ResponseEntity<Object> unlike(@PathVariable(value = "id") String commentId) {
-    Integer count = commentService.commentAction(CommentType.LIKE, false, commentId);
+    Integer count =
+        commentService.commentAction(CommentType.LIKE, false, commentId, CommentTarget.Movement);
     return ResponseEntity.ok(count);
   }
 
   @GetMapping("/{id}/love")
   public ResponseEntity<Object> love(@PathVariable(value = "id") String commentId) {
-    Integer count = commentService.commentAction(CommentType.LOVE, true, commentId);
+    Integer count =
+        commentService.commentAction(CommentType.LOVE, true, commentId, CommentTarget.Movement);
     return ResponseEntity.ok(count);
   }
 
   @GetMapping("/{id}/unlove")
   public ResponseEntity<Object> unlove(@PathVariable(value = "id") String commentId) {
-    Integer count = commentService.commentAction(CommentType.LOVE, false, commentId);
+    Integer count =
+        commentService.commentAction(CommentType.LOVE, false, commentId, CommentTarget.Movement);
     return ResponseEntity.ok(count);
   }
 }

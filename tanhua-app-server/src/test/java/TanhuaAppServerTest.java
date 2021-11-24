@@ -1,4 +1,7 @@
 import com.aliyuncs.exceptions.ClientException;
+import com.github.tobato.fastdfs.domain.conn.FdfsWebServer;
+import com.github.tobato.fastdfs.domain.fdfs.StorePath;
+import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.tanhua.AppServerApplication;
 import com.tanhua.dubbo.api.MovementApi;
 import com.tanhua.mongo.Movement;
@@ -33,6 +36,8 @@ public class TanhuaAppServerTest {
   @DubboReference private MovementApi movementApi;
   @Autowired private MovementService movementService;
   @Autowired HxTemplate hxTemplate;
+  @Autowired FastFileStorageClient fastFileStorageClient;
+  @Autowired FdfsWebServer fdfsWebServer;
 
   @Test
   public void smsTemplateTest() throws ClientException {
@@ -83,5 +88,15 @@ public class TanhuaAppServerTest {
   @Test
   public void testhxmsg() {
     hxTemplate.sendSystemMessage("test", "hello");
+  }
+
+  @Test
+  public void videoUploadTest() throws FileNotFoundException {
+    File file = new File("D:\\linux_cheatsheet_bw.pdf");
+    FileInputStream fileInputStream = new FileInputStream(file);
+    StorePath storePath =
+        fastFileStorageClient.uploadFile(fileInputStream, file.length(), "pdf", null);
+    String webServerPath = fdfsWebServer.getWebServerUrl();
+    System.out.println(webServerPath + storePath.getFullPath());
   }
 }

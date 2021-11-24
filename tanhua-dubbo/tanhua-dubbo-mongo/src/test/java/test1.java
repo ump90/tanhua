@@ -28,6 +28,7 @@ public class test1 {
 
   @Autowired private UserLocationApi userLocationApi;
   @Autowired private MovementApi movementApi;
+  @Autowired private VideoApi videoApi;
 
   @Test
   public void test() {
@@ -67,5 +68,6 @@ public class test1 {
   public void test4() {
     System.out.println(commentApi.getById("609917ecdf54dc7fe71f0d23"));
     System.out.println(movementApi.getById("5f0d73e65a319e6efab7fb50"));
+    System.out.println(videoApi.getById("5e82dd6164019531fc471ff0"));
   }
 }

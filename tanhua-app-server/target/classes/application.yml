@@ -35,12 +35,24 @@ spring:
   cloud:
     nacos:
       server-addr: 192.168.136.160:8848
-
+  servlet:
+    multipart:
+      max-file-size: 30MB
+      max-request-size: 30MB
 dubbo:
   registry:
     address: nacos://192.168.136.160:8848
   consumer:
     timeout: 30000
+fdfs:
+  thumb-image:
+    width: 150
+    height: 150
+  connect-timeout: 1500
+  so-timeout: 1500
+  tracker-list: 192.168.136.160:22122
+  web-server-url: http://192.168.136.160:8888/
+
 
 
 server:

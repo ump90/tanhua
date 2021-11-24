@@ -1,5 +1,8 @@
 package com.tanhua.server.controller;
 
+import com.tanhua.enums.CommentType;
+import com.tanhua.server.service.AnnouncementService;
+import com.tanhua.server.service.CommentService;
 import com.tanhua.server.service.MessageService;
 import com.tanhua.server.utils.UserThreadLocal;
 import com.tanhua.utils.Constants;
@@ -18,6 +21,8 @@ import java.util.Map;
 @RequestMapping("/messages")
 public class MessageController {
   @Autowired private MessageService messageService;
+  @Autowired private AnnouncementService announcementService;
+  @Autowired private CommentService commentService;
 
   @GetMapping("/contacts")
   public ResponseEntity<Object> getContractList(
@@ -34,5 +39,24 @@ public class MessageController {
     Long userId = UserThreadLocal.getId();
     messageService.addContract(friendUserId, userId);
     return ResponseEntity.ok(Constants.EMPTY_BODY);
+  }
+
+  @GetMapping("/announcements")
+  public ResponseEntity<Object> listAnnouncement(
+      @RequestParam Integer page, @RequestParam("pagesize") Integer pageSize) {
+    PageVo pageVo = announcementService.list(page, pageSize);
+    return ResponseEntity.ok(pageVo);
+  }
+
+  @GetMapping("/likes")
+  public ResponseEntity<Object> getLikes(Integer page, Integer pagesize) {
+    PageVo pageVo = commentService.getLovesOrLikes(page, pagesize, CommentType.LIKE);
+    return ResponseEntity.ok(pageVo);
+  }
+
+  @GetMapping("/loves")
+  public ResponseEntity<Object> getLoves(Integer page, Integer pagesize) {
+    PageVo pageVo = commentService.getLovesOrLikes(page, pagesize, CommentType.LOVE);
+    return ResponseEntity.ok(pageVo);
   }
 }

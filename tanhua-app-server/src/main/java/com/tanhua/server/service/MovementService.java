@@ -8,6 +8,7 @@ import com.tanhua.mongo.Movement;
 import com.tanhua.mongo.Visitor;
 import com.tanhua.pojo.ErrorResult;
 import com.tanhua.pojo.UserInfo;
+import com.tanhua.server.annotation.LogConfig;
 import com.tanhua.server.exception.BusinessException;
 import com.tanhua.server.utils.UserThreadLocal;
 import com.tanhua.template.OosTemplate;
@@ -49,6 +50,7 @@ public class MovementService {
    * @param files
    * @throws IOException
    */
+  @LogConfig(type = "0201", key = "movement", objectId = "#movement.getId()")
   public void sendMovement(Movement movement, MultipartFile[] files) throws IOException {
     if (StringUtils.isBlank(movement.getTextContent())) {
       throw new BusinessException(ErrorResult.contentError());
@@ -75,7 +77,7 @@ public class MovementService {
     List<MovementVo> movementVoList = new ArrayList<>();
     movementList.forEach(
         movement -> {
-          movementVoList.add(MovementVo.initMovementVo(movement, userInfo));
+          movementVoList.add(MovementVo.init(movement, userInfo));
         });
     pageVo.setItems(movementVoList);
     pageVo.setCounts(Math.toIntExact(counts));
@@ -134,10 +136,11 @@ public class MovementService {
         .build();
   }
 
+  @LogConfig(type = "0202", key = "movement", objectId = "#id")
   public MovementVo getSingleMovementById(String id) {
     Movement movement = movementApi.getById(id);
     UserInfo userInfo = userInfoApi.getById(movement.getUserId());
-    return MovementVo.initMovementVo(movement, userInfo);
+    return MovementVo.init(movement, userInfo);
   }
 
   private ArrayList<MovementVo> convertMovementToVo(List<Movement> movementList) {
@@ -150,8 +153,7 @@ public class MovementService {
     ArrayList<MovementVo> movementVoArrayList = new ArrayList<>();
     Long userId = UserThreadLocal.getId();
     for (Movement movement : movementList) {
-      MovementVo vo =
-          MovementVo.initMovementVo(movement, userInfoHashMap.get(movement.getUserId()));
+      MovementVo vo = MovementVo.init(movement, userInfoHashMap.get(movement.getUserId()));
       String redisKey = Constants.MOVEMENTS_INTERACT_KEY + movement.getId().toHexString();
       String likeHashKey = Constants.MOVEMENT_LIKE_HASHKEY + userId;
       String loveHashKey = Constants.MOVEMENT_LOVE_HASHKEY + userId;

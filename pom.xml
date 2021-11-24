@@ -14,6 +14,8 @@
         <module>tanhua-commons</module>
         <module>tanhua-domain</module>
         <module>tanhua-dubbo</module>
+        <module>tanhua-gateway</module>
+        <module>tanhua-admin</module>
     </modules>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -36,7 +38,7 @@
         <mybatis.mybatis-plus>3.4.3.4</mybatis.mybatis-plus>
         <lombok.version>1.18.8</lombok.version>
         <mongo.version>4.0.5</mongo.version>
-        <spring-cloud.version>Hoxton.SR10</spring-cloud.version>
+        <spring-cloud.version>Hoxton.SR12</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.6.RELEASE</spring-cloud-alibaba.version>
     </properties>
 
@@ -120,6 +122,12 @@
                 <groupId>mysql</groupId>
                 <artifactId>mysql-connector-java</artifactId>
                 <version>8.0.26</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.projectreactor.netty</groupId>
+                <artifactId>reactor-netty</artifactId>
+                <version>0.9.25.RELEASE</version>
             </dependency>
 
             <dependency>

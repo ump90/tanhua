@@ -26,6 +26,7 @@ public class CommentVo implements Serializable {
   private String createDate; // 评论时间
   private Integer likeCount; // 点赞数
   private Integer hasLiked; // 是否点赞（1是，0否）
+  private Integer hashLoved;
 
   public static CommentVo init(UserInfo userInfo, Comment item) {
     CommentVo vo = CommentVo.builder().build();

@@ -3,6 +3,7 @@ package com.tanhua.server.service;
 import com.tanhua.dubbo.api.UserApi;
 import com.tanhua.pojo.ErrorResult;
 import com.tanhua.pojo.User;
+import com.tanhua.server.annotation.LogConfig;
 import com.tanhua.server.exception.BusinessException;
 import com.tanhua.server.utils.UserThreadLocal;
 import com.tanhua.template.HxTemplate;
@@ -52,23 +53,13 @@ public class UserService {
   }
 
   // 登陆验证
-
+  @LogConfig(type = "0101", key = "user", objectId = "#phone")
   public Map<String, String> login(String phone, String code) {
     String redisKey = Constants.PHONE_NUMBER + phone;
     boolean isNewUser = false;
     User user = userApi.getByPhone(phone);
     if (user == null) {
-      User newUser = new User();
-      newUser.setMobile(phone);
-      newUser.setPassword(
-          DigestUtils.md5DigestAsHex(Constants.INIT_PASSWORD.getBytes(StandardCharsets.UTF_8)));
-      userApi.save(newUser);
-      User savedUser = userApi.getByPhone(phone);
-      String hxUsername = Constants.HX_USER_PREFIX + savedUser.getId();
-      savedUser.setHxUser(hxUsername);
-      savedUser.setHxPassword(Constants.INIT_PASSWORD);
-      userApi.updateById(savedUser);
-      hxTemplate.createUser(hxUsername, Constants.INIT_PASSWORD);
+      registerNewUser(phone);
       isNewUser = true;
     }
 
@@ -108,5 +99,20 @@ public class UserService {
     }
     user.setMobile(phone);
     userApi.save(user);
+  }
+
+  @LogConfig(type = "0102", key = "user", objectId = "#phone")
+  private void registerNewUser(String phone) {
+    User newUser = new User();
+    newUser.setMobile(phone);
+    newUser.setPassword(
+        DigestUtils.md5DigestAsHex(Constants.INIT_PASSWORD.getBytes(StandardCharsets.UTF_8)));
+    userApi.save(newUser);
+    User savedUser = userApi.getByPhone(phone);
+    String hxUsername = Constants.HX_USER_PREFIX + savedUser.getId();
+    savedUser.setHxUser(hxUsername);
+    savedUser.setHxPassword(Constants.INIT_PASSWORD);
+    userApi.updateById(savedUser);
+    hxTemplate.createUser(hxUsername, Constants.INIT_PASSWORD);
   }
 }

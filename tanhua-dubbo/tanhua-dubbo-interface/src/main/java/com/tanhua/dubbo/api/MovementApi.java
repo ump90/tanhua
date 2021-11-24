@@ -14,7 +14,11 @@ public interface MovementApi {
 
   List<Movement> list(Long userId, Integer page, Integer pageSize);
 
+  List<Movement> list(Long userId, Integer page, Integer pageSize, Integer status);
+
   Long countByUserId(Long userId);
+
+  Long countByUserId(Long userId, Integer status);
 
   Long countByFriendId(Long friendId);
 
