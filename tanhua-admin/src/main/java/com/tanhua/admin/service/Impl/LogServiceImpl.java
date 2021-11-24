@@ -27,4 +27,9 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, Log> implements LogSe
   public Long countActiveUser(String date) {
     return logMapper.countActiveUser(date);
   }
+
+  @Override
+  public Long countRetentionUser(String today, String yesterday) {
+    return logMapper.countRetentionUser(today, yesterday);
+  }
 }

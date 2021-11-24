@@ -4,6 +4,7 @@ import cn.hutool.core.collection.CollUtil;
 import com.tanhua.dubbo.api.MovementApi;
 import com.tanhua.dubbo.api.UserInfoApi;
 import com.tanhua.dubbo.api.VisitorApi;
+import com.tanhua.enums.LogType;
 import com.tanhua.mongo.Movement;
 import com.tanhua.mongo.Visitor;
 import com.tanhua.pojo.ErrorResult;
@@ -50,7 +51,7 @@ public class MovementService {
    * @param files
    * @throws IOException
    */
-  @LogConfig(type = "0201", key = "movement", objectId = "#movement.getId()")
+  @LogConfig(type = LogType.POSTMOVEMENT, key = "movement", objectId = "#movement.getId()")
   public void sendMovement(Movement movement, MultipartFile[] files) throws IOException {
     if (StringUtils.isBlank(movement.getTextContent())) {
       throw new BusinessException(ErrorResult.contentError());
@@ -136,7 +137,7 @@ public class MovementService {
         .build();
   }
 
-  @LogConfig(type = "0202", key = "movement", objectId = "#id")
+  @LogConfig(type = LogType.VIEWMOVEMENT, key = "movement", objectId = "#id")
   public MovementVo getSingleMovementById(String id) {
     Movement movement = movementApi.getById(id);
     UserInfo userInfo = userInfoApi.getById(movement.getUserId());

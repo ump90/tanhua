@@ -39,7 +39,7 @@ public class LogAspect {
     msg.put("userId", UserThreadLocal.getId());
     msg.put("date", new SimpleDateFormat("yyyy-MM-dd").format(new Date()));
     msg.put("objId", objId);
-    msg.put("type", config.type());
+    msg.put("type", config.type().getType());
     String message = JSON.toJSONString(msg);
     // 发送消息
     try {

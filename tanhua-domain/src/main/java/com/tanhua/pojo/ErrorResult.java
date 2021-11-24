@@ -68,4 +68,8 @@ public class ErrorResult implements Serializable {
   public static ErrorResult disloveError() {
     return ErrorResult.builder().errCode("000009").errMessage("用户未喜欢").build();
   }
+
+  public static ErrorResult freezeError() {
+    return ErrorResult.builder().errCode("000010").errMessage("用户已冻结").build();
+  }
 }

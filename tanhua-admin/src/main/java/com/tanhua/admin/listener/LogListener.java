@@ -24,14 +24,14 @@ public class LogListener {
       bindings =
           @QueueBinding(
               value = @Queue(value = "tanhua.log.queue"),
-              exchange = @Exchange(value = "tanhua.log.exchange"),
+              exchange = @Exchange(value = "tanhua.log.exchange", type = "topic"),
               key = "{log.#}"))
   public void receiveLog(String logString) {
     Map<String, Object> map = JSON.parseObject(logString);
     Long userId = Long.parseLong((String) map.get("userId"));
     String type = (String) map.get("type");
     String logTime = (String) map.get("logTime");
-    String businessId = (String) map.get("businessId");
+    String objectId = (String) map.get("objectId");
     Log log = new Log();
     log.setUserId(userId);
     log.setType(type);

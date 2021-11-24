@@ -11,4 +11,6 @@ public interface LogService extends IService<Log> {
   Long countUser(String date, String type);
 
   Long countActiveUser(String date);
+
+  Long countRetentionUser(String today, String yesterday);
 }

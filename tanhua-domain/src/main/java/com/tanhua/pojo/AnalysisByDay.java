@@ -1,6 +1,7 @@
 package com.tanhua.pojo;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.Date;
@@ -11,6 +12,7 @@ import java.util.Date;
  */
 @Data
 @TableName("tb_analysis_by_day")
+@Builder
 public class AnalysisByDay extends BasePojo {
   private static final long serialVersionUID = -8407031676500518698L;
   private Long id;

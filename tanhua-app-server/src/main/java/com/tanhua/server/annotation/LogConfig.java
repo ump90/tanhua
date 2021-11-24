@@ -1,5 +1,7 @@
 package com.tanhua.server.annotation;
 
+import com.tanhua.enums.LogType;
+
 import java.lang.annotation.Documented;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -17,5 +19,5 @@ public @interface LogConfig {
 
   String key();
 
-  String type();
+  LogType type();
 }

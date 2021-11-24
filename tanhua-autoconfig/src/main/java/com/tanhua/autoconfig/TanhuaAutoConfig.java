@@ -1,13 +1,8 @@
 package com.tanhua.autoconfig;
 
-import com.tanhua.properties.AiFaceProperties;
-import com.tanhua.properties.HxProperties;
-import com.tanhua.properties.OosProperties;
-import com.tanhua.properties.SmsProperties;
-import com.tanhua.template.AiFaceTemplate;
-import com.tanhua.template.HxTemplate;
-import com.tanhua.template.OosTemplate;
-import com.tanhua.template.SmsTemplate;
+import com.tanhua.properties.*;
+import com.tanhua.template.*;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 
@@ -19,7 +14,8 @@ import org.springframework.context.annotation.Bean;
   SmsProperties.class,
   OosProperties.class,
   AiFaceProperties.class,
-  HxProperties.class
+  HxProperties.class,
+  ContentScanProperties.class
 })
 public class TanhuaAutoConfig {
   @Bean
@@ -35,6 +31,12 @@ public class TanhuaAutoConfig {
   @Bean
   public AiFaceTemplate aiFaceTemplate(AiFaceProperties aiFaceProperties) {
     return new AiFaceTemplate(aiFaceProperties);
+  }
+
+  @Bean
+  @ConditionalOnProperty(prefix = "tanhua.content", value = "enable", havingValue = "true")
+  public ContentScanTemplate contentScanTemplate(ContentScanProperties contentScanProperties) {
+    return new ContentScanTemplate(contentScanProperties);
   }
 
   @Bean

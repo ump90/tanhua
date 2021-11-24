@@ -1,10 +1,12 @@
 package com.tanhua.server.service;
 
 import com.tanhua.dubbo.api.UserApi;
+import com.tanhua.enums.LogType;
 import com.tanhua.pojo.ErrorResult;
 import com.tanhua.pojo.User;
 import com.tanhua.server.annotation.LogConfig;
 import com.tanhua.server.exception.BusinessException;
+import com.tanhua.server.utils.CheckFreezeUserUtil;
 import com.tanhua.server.utils.UserThreadLocal;
 import com.tanhua.template.HxTemplate;
 import com.tanhua.template.SmsTemplate;
@@ -53,7 +55,7 @@ public class UserService {
   }
 
   // 登陆验证
-  @LogConfig(type = "0101", key = "user", objectId = "#phone")
+  @LogConfig(type = LogType.LOGIN, key = "user", objectId = "#phone")
   public Map<String, String> login(String phone, String code) {
     String redisKey = Constants.PHONE_NUMBER + phone;
     boolean isNewUser = false;
@@ -65,6 +67,8 @@ public class UserService {
 
     if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
       Long userId = userApi.getByPhone(phone).getId();
+      CheckFreezeUserUtil.newObject().check(userId);
+
       String savedCode = redisTemplate.opsForValue().get(redisKey);
 
       if (code.equals(savedCode)) {
@@ -101,7 +105,7 @@ public class UserService {
     userApi.save(user);
   }
 
-  @LogConfig(type = "0102", key = "user", objectId = "#phone")
+  @LogConfig(type = LogType.REGISTER, key = "user", objectId = "#phone")
   private void registerNewUser(String phone) {
     User newUser = new User();
     newUser.setMobile(phone);

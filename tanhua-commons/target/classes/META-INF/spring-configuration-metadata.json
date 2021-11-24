@@ -6,6 +6,11 @@
       "sourceType": "com.tanhua.properties.AiFaceProperties"
     },
     {
+      "name": "tanhua.content",
+      "type": "com.tanhua.properties.ContentScanProperties",
+      "sourceType": "com.tanhua.properties.ContentScanProperties"
+    },
+    {
       "name": "tanhua.hx",
       "type": "com.tanhua.properties.HxProperties",
       "sourceType": "com.tanhua.properties.HxProperties"
@@ -36,6 +41,21 @@
       "name": "tanhua.aip.app-secret-key",
       "type": "java.lang.String",
       "sourceType": "com.tanhua.properties.AiFaceProperties"
+    },
+    {
+      "name": "tanhua.content.access-key-id",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.ContentScanProperties"
+    },
+    {
+      "name": "tanhua.content.access-key-secret",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.ContentScanProperties"
+    },
+    {
+      "name": "tanhua.content.scenes",
+      "type": "java.lang.String",
+      "sourceType": "com.tanhua.properties.ContentScanProperties"
     },
     {
       "name": "tanhua.hx.app-key",

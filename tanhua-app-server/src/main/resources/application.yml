@@ -42,8 +42,8 @@ spring:
   rabbitmq:
     host: 192.168.136.160
     port: 5672
-    username: root
-    password: root
+    username: guest
+    password: guest
 
 dubbo:
   registry:
