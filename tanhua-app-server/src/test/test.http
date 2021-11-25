@@ -1,0 +1,19 @@
+POST http://localhost:1001/user/login
+Content-Type: application/json
+
+{
+  "phone": 13500000000
+}
+
+###
+POST http://localhost:1001/user/loginVerification
+Content-Type: application/json
+
+{
+  "phone": 13500000000,
+  "verificationCode": "857612"
+}
+
+> {% client.global.set("Authorization", response.body.json.token); %}
+
+###

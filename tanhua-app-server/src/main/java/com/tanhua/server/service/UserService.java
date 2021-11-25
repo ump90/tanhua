@@ -5,7 +5,6 @@ import com.tanhua.enums.LogType;
 import com.tanhua.pojo.ErrorResult;
 import com.tanhua.pojo.User;
 import com.tanhua.server.exception.BusinessException;
-import com.tanhua.server.utils.CheckFreezeUserUtil;
 import com.tanhua.server.utils.UserThreadLocal;
 import com.tanhua.template.HxTemplate;
 import com.tanhua.template.SmsTemplate;
@@ -34,6 +33,7 @@ public class UserService {
   @DubboReference private UserApi userApi;
   @Autowired private HxTemplate hxTemplate;
   @Autowired private LogService logService;
+  @Autowired private CheckFreezeUseService checkFreezeUseService;
 
   // 发送短信
 
@@ -68,7 +68,7 @@ public class UserService {
 
     if (Boolean.TRUE.equals(redisTemplate.hasKey(redisKey))) {
       Long userId = userApi.getByPhone(phone).getId();
-      CheckFreezeUserUtil.newObject().check(userId);
+      checkFreezeUseService.check();
 
       String savedCode = redisTemplate.opsForValue().get(redisKey);
 
@@ -81,6 +81,9 @@ public class UserService {
         returnMap.put("token", token);
         returnMap.put("isNew", String.valueOf(isNewUser));
         redisTemplate.delete(redisKey);
+        User user1 = new User();
+        user1.setId(userId);
+        UserThreadLocal.setUser(user1);
         logService.sendLog("user", LogType.LOGIN, phone);
         return returnMap;
       } else {
@@ -106,7 +109,6 @@ public class UserService {
     user.setMobile(phone);
     userApi.save(user);
   }
-
 
   private void registerNewUser(String phone) {
     logService.sendLog("user", LogType.REGISTER, phone);

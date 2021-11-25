@@ -42,6 +42,7 @@ public class CommentService {
   @DubboReference private VideoApi videoApi;
   @Autowired private LogService logService;
   @Autowired private RedisTemplate<String, Object> redisTemplate;
+  @Autowired CheckFreezeUseService checkFreezeUseService;
 
   public PageVo listById(Integer page, Integer pageSize, String movementId) {
     int count = Math.toIntExact(commentApi.countByPublishId(movementId));
@@ -80,6 +81,7 @@ public class CommentService {
   }
 
   public void postComment(String id, String comment, CommentTarget commentTarget) {
+    checkFreezeUseService.check();
     Long userId = UserThreadLocal.getId();
     ObjectId pushlishId = null;
     Long publishUserId = null;
@@ -113,6 +115,7 @@ public class CommentService {
 
   public Integer commentAction(
       CommentType commentType, Boolean actionDirection, String id, CommentTarget commentTarget) {
+    checkFreezeUseService.check();
 
     Boolean isToComment = commentApi.checkIsToComment(commentTarget);
     Long userId = UserThreadLocal.getId();

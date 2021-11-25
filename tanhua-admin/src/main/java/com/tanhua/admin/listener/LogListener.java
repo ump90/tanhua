@@ -30,7 +30,7 @@ public class LogListener {
               key = "{log.#}"))
   public void receiveLog(String logString) {
     Map<String, Object> map = JSON.parseObject(logString);
-    Long userId = Long.parseLong((String) map.get("userId"));
+    Long userId = Long.parseLong(String.valueOf((int) map.get("userId")));
     String type = (String) map.get("type");
     String logTime = (String) map.get("logTime");
     String objectId = (String) map.get("objectId");

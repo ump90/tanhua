@@ -40,8 +40,10 @@ public class SmallVideoService {
   @DubboReference private FocusUserApi focusUserApi;
   @Autowired RedisTemplate<String, Object> redisTemplate;
   @Autowired LogService logService;
+  @Autowired CheckFreezeUseService checkFreezeUseService;
 
   public void save(MultipartFile videoThumbnail, MultipartFile video) throws IOException {
+    checkFreezeUseService.check();
     String thumbNailUrl =
         oosTemplate.upload(videoThumbnail.getOriginalFilename(), videoThumbnail.getInputStream());
     String videoName = video.getOriginalFilename();
