@@ -9,7 +9,6 @@ import com.tanhua.mongo.Movement;
 import com.tanhua.mongo.Visitor;
 import com.tanhua.pojo.ErrorResult;
 import com.tanhua.pojo.UserInfo;
-import com.tanhua.server.annotation.LogConfig;
 import com.tanhua.server.exception.BusinessException;
 import com.tanhua.server.utils.UserThreadLocal;
 import com.tanhua.template.OosTemplate;
@@ -43,6 +42,7 @@ public class MovementService {
   @DubboReference private VisitorApi visitorApi;
   @Autowired private RedisTemplate<String, Object> redisTemplate;
   @Autowired private OosTemplate oosTemplate;
+  @Autowired private LogService logService;
 
   /**
    * 发布动态
@@ -51,8 +51,8 @@ public class MovementService {
    * @param files
    * @throws IOException
    */
-  @LogConfig(type = LogType.POSTMOVEMENT, key = "movement", objectId = "#movement.getId()")
   public void sendMovement(Movement movement, MultipartFile[] files) throws IOException {
+    logService.sendLog("movement", LogType.POSTMOVEMENT, "");
     if (StringUtils.isBlank(movement.getTextContent())) {
       throw new BusinessException(ErrorResult.contentError());
     }
@@ -137,9 +137,10 @@ public class MovementService {
         .build();
   }
 
-  @LogConfig(type = LogType.VIEWMOVEMENT, key = "movement", objectId = "#id")
   public MovementVo getSingleMovementById(String id) {
+
     Movement movement = movementApi.getById(id);
+    logService.sendLog("movement", LogType.VIEWMOVEMENT, movement.getId().toHexString());
     UserInfo userInfo = userInfoApi.getById(movement.getUserId());
     return MovementVo.init(movement, userInfo);
   }

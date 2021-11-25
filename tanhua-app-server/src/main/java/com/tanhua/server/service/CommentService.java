@@ -7,6 +7,7 @@ import com.tanhua.dubbo.api.UserInfoApi;
 import com.tanhua.dubbo.api.VideoApi;
 import com.tanhua.enums.CommentTarget;
 import com.tanhua.enums.CommentType;
+import com.tanhua.enums.LogType;
 import com.tanhua.mongo.Comment;
 import com.tanhua.mongo.Movement;
 import com.tanhua.mongo.Video;
@@ -39,6 +40,7 @@ public class CommentService {
   @DubboReference private CommentApi commentApi;
   @DubboReference private MovementApi movementApi;
   @DubboReference private VideoApi videoApi;
+  @Autowired private LogService logService;
   @Autowired private RedisTemplate<String, Object> redisTemplate;
 
   public PageVo listById(Integer page, Integer pageSize, String movementId) {
@@ -85,6 +87,7 @@ public class CommentService {
       Movement movement = movementApi.getById(id);
       pushlishId = movement.getId();
       publishUserId = movement.getUserId();
+      logService.sendLog("movement", LogType.COMMENTMOVEMENT, movement.getId().toHexString());
     }
 
     if (commentTarget == CommentTarget.Video) {
@@ -92,6 +95,7 @@ public class CommentService {
       Video video = videoApi.getById(id);
       pushlishId = video.getId();
       publishUserId = video.getUserId();
+      logService.sendLog("video", LogType.COMMENTVIDEO, video.getId().toHexString());
     }
 
     Comment comment1 =
@@ -153,8 +157,36 @@ public class CommentService {
       }
 
     } else {
-      Movement movement = movementApi.getById(id);
-      publishUserId = movement.getUserId();
+      if (commentTarget == CommentTarget.Movement) {
+        Movement movement = movementApi.getById(id);
+        publishUserId = movement.getUserId();
+        if (commentType == CommentType.LIKE) {
+          if (actionDirection) {
+            logService.sendLog("movement", LogType.LIKEMOVEMENT, id);
+          } else {
+            logService.sendLog("movement", LogType.UNLIKEMOVEMENT, id);
+          }
+
+        } else if (commentType == CommentType.LOVE) {
+          if (actionDirection) {
+            logService.sendLog("movement", LogType.LOVEMOVEMENT, id);
+          } else {
+            logService.sendLog("movement", LogType.UNLOVEMOVEMENT, id);
+          }
+        }
+      }
+      if (commentTarget == CommentTarget.Video) {
+        Video video = videoApi.getById(id);
+        publishUserId = video.getUserId();
+        if (commentType == CommentType.LIKE) {
+          if (actionDirection) {
+            logService.sendLog("video", LogType.LIKEVIDEO, id);
+          } else {
+            logService.sendLog("video", LogType.UNLIKEVIDEO, id);
+          }
+        }
+      }
+
       redisKey = Constants.MOVEMENTS_INTERACT_KEY + id;
       if (commentType.getType() == 1) {
         hashKey = Constants.MOVEMENT_LIKE_HASHKEY + userId;

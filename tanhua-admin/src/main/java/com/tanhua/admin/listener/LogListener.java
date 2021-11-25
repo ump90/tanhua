@@ -2,6 +2,7 @@ package com.tanhua.admin.listener;
 
 import com.alibaba.fastjson.JSON;
 import com.tanhua.admin.service.LogService;
+import com.tanhua.admin.service.MovementCheckService;
 import com.tanhua.pojo.Log;
 import org.springframework.amqp.rabbit.annotation.Exchange;
 import org.springframework.amqp.rabbit.annotation.Queue;
@@ -19,6 +20,7 @@ import java.util.Map;
 @Component
 public class LogListener {
   @Autowired private LogService logService;
+  @Autowired private MovementCheckService movementCheckService;
 
   @RabbitListener(
       bindings =
@@ -37,5 +39,15 @@ public class LogListener {
     log.setType(type);
     log.setLogTime(logTime);
     logService.save(log);
+  }
+
+  @RabbitListener(
+      bindings =
+          @QueueBinding(
+              value = @Queue(value = "tanhua.check.queue"),
+              exchange = @Exchange(value = "tanhua.audit.exchange", type = "topic"),
+              key = "audit.movement"))
+  public void checkMovement(String movementId) throws Exception {
+    movementCheckService.check(movementId);
   }
 }

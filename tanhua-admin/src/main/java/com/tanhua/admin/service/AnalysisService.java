@@ -38,4 +38,6 @@ public class AnalysisService {
     analysisByDayService.save(analysisByDay);
     log.info("今日日志已生成");
   }
+
+
 }

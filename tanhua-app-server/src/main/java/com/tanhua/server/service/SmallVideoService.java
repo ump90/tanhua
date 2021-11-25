@@ -7,6 +7,7 @@ import com.github.tobato.fastdfs.service.FastFileStorageClient;
 import com.tanhua.dubbo.api.FocusUserApi;
 import com.tanhua.dubbo.api.UserInfoApi;
 import com.tanhua.dubbo.api.VideoApi;
+import com.tanhua.enums.LogType;
 import com.tanhua.mongo.Video;
 import com.tanhua.pojo.UserInfo;
 import com.tanhua.server.utils.UserThreadLocal;
@@ -38,6 +39,7 @@ public class SmallVideoService {
   @DubboReference private UserInfoApi userInfoApi;
   @DubboReference private FocusUserApi focusUserApi;
   @Autowired RedisTemplate<String, Object> redisTemplate;
+  @Autowired LogService logService;
 
   public void save(MultipartFile videoThumbnail, MultipartFile video) throws IOException {
     String thumbNailUrl =
@@ -64,6 +66,7 @@ public class SmallVideoService {
             .text("我发布了新的小视频，快来看看吧")
             .commentCount(0)
             .build();
+    logService.sendLog("video", LogType.POSTVIDEO, "");
   }
 
   public PageVo list(Integer page, Integer pageSize) {

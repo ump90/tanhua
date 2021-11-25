@@ -99,7 +99,7 @@ public class ContentScanTemplate {
     this.contentScanProperties = contentScanProperties;
   }
 
-  public String scanImage(String url) {
+  public String scanImage(List<String> imageList) {
 
     IClientProfile profile =
         DefaultProfile.getProfile(
@@ -123,18 +123,22 @@ public class ContentScanTemplate {
      * 设置要检测的风险场景。计费依据此处传递的场景计算。 一次请求中可以同时检测多张图片，每张图片可以同时检测多个风险场景，计费按照场景计算。
      * 例如，检测2张图片，场景传递porn和terrorism，计费会按照2张图片鉴黄，2张图片暴恐检测计算。 porn：表示鉴黄场景。
      */
-    httpBody.put("scenes", Arrays.asList("porn"));
+    httpBody.put("scenes", Arrays.asList(contentScanProperties.getScenes().split(",")));
 
     /**
      * 设置待检测图片。一张图片对应一个task。 多张图片同时检测时，处理的时间由最后一个处理完的图片决定。
      * 通常情况下批量检测的平均响应时间比单张检测的要长。一次批量提交的图片数越多，响应时间被拉长的概率越高。 这里以单张图片检测作为示例, 如果是批量图片检测，请自行构建多个task。
      */
     JSONObject task = new JSONObject();
-    task.put("dataId", UUID.randomUUID().toString());
+    imageList.forEach(
+        img -> {
+          task.put("dataId", UUID.randomUUID().toString());
 
-    // 设置图片链接。
-    task.put("url", "http://www.aliyundoc.com/xxx.test.jpg");
-    task.put("time", new Date());
+          // 设置图片链接。
+          task.put("url", img);
+          task.put("time", new Date());
+        });
+
     httpBody.put("tasks", Arrays.asList(task));
 
     imageSyncScanRequest.setHttpContent(
@@ -176,8 +180,14 @@ public class ContentScanTemplate {
               // 根据不同的suggestion结果做业务上的不同处理。例如，将违规数据删除等。
               System.out.println("scene = [" + scene + "]");
               System.out.println("suggestion = [" + suggestion + "]");
-              return suggestion;
+              if ("block".equals(suggestion)) {
+                return "block";
+              }
+              if ("review".equals(suggestion)) {
+                return "review";
+              }
             }
+            return "pass";
           } else {
             // 单张图片处理失败, 原因视具体的情况详细分析。
             System.out.println("task process fail. task response:" + JSON.toJSONString(taskResult));

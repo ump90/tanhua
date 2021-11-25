@@ -31,4 +31,6 @@ public interface MovementApi {
   Movement getById(String id);
 
   void updateWithComment(Comment comment);
+
+  void updateById(Movement movement);
 }

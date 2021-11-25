@@ -4,7 +4,6 @@ import com.tanhua.dubbo.api.UserApi;
 import com.tanhua.enums.LogType;
 import com.tanhua.pojo.ErrorResult;
 import com.tanhua.pojo.User;
-import com.tanhua.server.annotation.LogConfig;
 import com.tanhua.server.exception.BusinessException;
 import com.tanhua.server.utils.CheckFreezeUserUtil;
 import com.tanhua.server.utils.UserThreadLocal;
@@ -34,6 +33,7 @@ public class UserService {
   @Autowired private SmsTemplate smsTemplate;
   @DubboReference private UserApi userApi;
   @Autowired private HxTemplate hxTemplate;
+  @Autowired private LogService logService;
 
   // 发送短信
 
@@ -55,8 +55,9 @@ public class UserService {
   }
 
   // 登陆验证
-  @LogConfig(type = LogType.LOGIN, key = "user", objectId = "#phone")
+
   public Map<String, String> login(String phone, String code) {
+
     String redisKey = Constants.PHONE_NUMBER + phone;
     boolean isNewUser = false;
     User user = userApi.getByPhone(phone);
@@ -80,6 +81,7 @@ public class UserService {
         returnMap.put("token", token);
         returnMap.put("isNew", String.valueOf(isNewUser));
         redisTemplate.delete(redisKey);
+        logService.sendLog("user", LogType.LOGIN, phone);
         return returnMap;
       } else {
         throw new BusinessException(ErrorResult.loginCheckError());
@@ -105,8 +107,10 @@ public class UserService {
     userApi.save(user);
   }
 
-  @LogConfig(type = LogType.REGISTER, key = "user", objectId = "#phone")
+
   private void registerNewUser(String phone) {
+    logService.sendLog("user", LogType.REGISTER, phone);
+
     User newUser = new User();
     newUser.setMobile(phone);
     newUser.setPassword(
